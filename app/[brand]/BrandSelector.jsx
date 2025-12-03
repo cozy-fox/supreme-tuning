@@ -1,17 +1,19 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
-import { Search, Car, Settings, Gauge, Zap } from 'lucide-react';
+import { useLanguage } from '@/components/LanguageContext';
+import { Search, Car, Settings, Gauge, Zap, ChevronRight } from 'lucide-react';
 
 export default function BrandSelector({ brand, models }) {
   const router = useRouter();
   const { fetchAPI } = useAuth();
+  const { t } = useLanguage();
 
   const [types, setTypes] = useState([]);
   const [engines, setEngines] = useState([]);
-  
+
   const [selModel, setSelModel] = useState(null);
   const [selType, setSelType] = useState(null);
   const [selEngine, setSelEngine] = useState(null);
@@ -59,11 +61,6 @@ export default function BrandSelector({ brand, models }) {
     }
   }, [types, fetchAPI]);
 
-  const handleEngineType = useCallback((e) => {
-    setEngineType(e.target.value || null);
-    setSelEngine(null);
-  }, []);
-
   const handleEngine = useCallback((e) => {
     const engineId = parseInt(e.target.value);
     const engine = engines.find(eng => eng.id === engineId);
@@ -84,81 +81,125 @@ export default function BrandSelector({ brand, models }) {
 
   const handleSearch = useCallback(() => {
     if (!canSearch) return;
-    
-    // Navigate to SEO-friendly URL
     const url = `/${brand.name.toLowerCase()}/${encodeURIComponent(selModel.name)}/${encodeURIComponent(selType.name)}/${selEngine.id}`;
     router.push(url);
   }, [canSearch, brand, selModel, selType, selEngine, router]);
 
   return (
-    <div className="selection-card animate-in" style={{ marginTop: '32px' }}>
-      <div style={{ position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gap: '20px' }}>
-          {/* Model Selector */}
-          <div>
-            <label><Car size={14} style={{ marginRight: '8px' }} />Model</label>
-            <select onChange={handleModel} value={selModel?.id || ''} disabled={loading}>
-              <option value="">-- Selecteer Model --</option>
-              {models.map(m => (
-                <option key={m.id} value={m.id}>{m.name}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Type/Generation Selector */}
-          {selModel && types.length > 0 && (
-            <div className="animate-in">
-              <label><Settings size={14} style={{ marginRight: '8px' }} />Generatie / Type</label>
-              <select onChange={handleType} value={selType?.id || ''} disabled={loading}>
-                <option value="">-- Selecteer Generatie --</option>
-                {types.map(t => (
-                  <option key={t.id} value={t.id}>{t.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Engine Type Filter */}
-          {selType && engineTypes.length > 1 && (
-            <div className="animate-in">
-              <label><Zap size={14} style={{ marginRight: '8px' }} />Brandstof Type</label>
-              <select onChange={handleEngineType} value={engineType || ''}>
-                <option value="">Alle Types</option>
-                {engineTypes.map(t => (
-                  <option key={t} value={t}>{t}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          {/* Engine Selector */}
-          {selType && filteredEngines.length > 0 && (
-            <div className="animate-in">
-              <label><Gauge size={14} style={{ marginRight: '8px' }} />Motor</label>
-              <select onChange={handleEngine} value={selEngine?.id || ''} disabled={loading}>
-                <option value="">-- Selecteer Motor --</option>
-                {filteredEngines.map(e => (
-                  <option key={e.id} value={e.id}>
-                    {e.name} - {e.description} ({e.type})
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+    <div className="selector-container animate-in" style={{ marginTop: '32px' }}>
+      {/* Horizontal Selector Row */}
+      <div className="selector-row">
+        {/* Model Selector */}
+        <div className="selector-item">
+          <label className="selector-label">
+            <Car size={16} />
+            <span>{t('model')}</span>
+          </label>
+          <select
+            onChange={handleModel}
+            value={selModel?.id || ''}
+            disabled={loading}
+            className="selector-select"
+          >
+            <option value="">{t('selectModel')}</option>
+            {models.map(m => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
+          </select>
         </div>
 
-        {/* Search Button */}
-        <button onClick={handleSearch} className="btn btn-search" disabled={!canSearch} style={{ marginTop: '24px' }}>
-          <Search size={20} />
-          Zoeken
-        </button>
+        <ChevronRight size={24} className="selector-arrow" />
 
-        {loading && (
-          <div className="flex-center" style={{ padding: '20px 0' }}>
-            <div className="spinner"></div>
-          </div>
-        )}
+        {/* Type/Generation Selector */}
+        <div className="selector-item">
+          <label className="selector-label">
+            <Settings size={16} />
+            <span>{t('generation')}</span>
+          </label>
+          <select
+            onChange={handleType}
+            value={selType?.id || ''}
+            disabled={loading || !selModel}
+            className="selector-select"
+          >
+            <option value="">{t('selectGeneration')}</option>
+            {types.map(t => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <ChevronRight size={24} className="selector-arrow" />
+
+        {/* Engine Selector */}
+        <div className="selector-item">
+          <label className="selector-label">
+            <Gauge size={16} />
+            <span>{t('engine')}</span>
+          </label>
+          <select
+            onChange={handleEngine}
+            value={selEngine?.id || ''}
+            disabled={loading || !selType || filteredEngines.length === 0}
+            className="selector-select"
+          >
+            <option value="">{t('selectEngine')}</option>
+            {filteredEngines.map(e => (
+              <option key={e.id} value={e.id}>
+                {e.name} - {e.description} ({e.type})
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
+      {/* Fuel Type Filter (shown when multiple types available) */}
+      {selType && engineTypes.length > 1 && (
+        <div className="fuel-filter animate-in">
+          <label className="selector-label">
+            <Zap size={16} />
+            <span>{t('fuelType')}</span>
+          </label>
+          <div className="fuel-buttons">
+            <button
+              className={`fuel-btn ${!engineType ? 'active' : ''}`}
+              onClick={() => { setEngineType(null); setSelEngine(null); }}
+            >
+              {t('allTypes')}
+            </button>
+            {engineTypes.map(type => (
+              <button
+                key={type}
+                className={`fuel-btn ${engineType === type ? 'active' : ''}`}
+                onClick={() => { setEngineType(type); setSelEngine(null); }}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Search Button */}
+      <div className="search-row">
+        <button
+          onClick={handleSearch}
+          className="btn-search-modern"
+          disabled={!canSearch}
+        >
+          <Search size={22} />
+          <span>{t('search')}</span>
+          <div className="btn-arrow">
+            <ChevronRight size={20} />
+          </div>
+        </button>
+      </div>
+
+      {loading && (
+        <div className="flex-center" style={{ padding: '20px 0' }}>
+          <div className="spinner"></div>
+        </div>
+      )}
     </div>
   );
 }

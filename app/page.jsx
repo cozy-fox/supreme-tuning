@@ -1,7 +1,7 @@
 import { getBrands } from '@/lib/data';
 import Header from '@/components/Header';
 import BrandCard from '@/components/BrandCard';
-import { Zap } from 'lucide-react';
+import HeroSection from '@/components/HeroSection';
 
 export const metadata = {
   title: 'Chiptuning Calculator | Supreme Tuning',
@@ -19,16 +19,7 @@ export default async function HomePage() {
     <>
       <Header />
       <main className="container" style={{ padding: '40px 24px' }}>
-        {/* Hero Section */}
-        <div className="hero-section">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
-            <Zap size={32} color="#c9a227" />
-            <h1>Chiptuning Calculator</h1>
-          </div>
-          <p style={{ color: '#8a8a8a', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
-            Selecteer uw automerk om de tuning mogelijkheden te bekijken
-          </p>
-        </div>
+        <HeroSection />
 
         {/* Brand Grid */}
         <div className="grid-brands" style={{ marginTop: '40px' }}>

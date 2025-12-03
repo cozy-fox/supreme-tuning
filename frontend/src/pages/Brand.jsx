@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useApi } from '../context/AuthContext.jsx';
 import Header from '../components/Header.jsx';
-import StageCard from '../components/StageCard.jsx';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Car, Settings, Gauge, Zap } from 'lucide-react';
 
@@ -13,14 +12,12 @@ const BrandPage = () => {
     const [models, setModels] = useState([]);
     const [types, setTypes] = useState([]);
     const [engines, setEngines] = useState([]);
-    const [stages, setStages] = useState([]);
 
     const [selBrand, setSelBrand] = useState(null);
     const [selModel, setSelModel] = useState(null);
     const [selType, setSelType] = useState(null);
     const [selEngine, setSelEngine] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [showResults, setShowResults] = useState(false);
 
     const [engineType, setEngineType] = useState(null);
     const engineTypes = useMemo(() => {
@@ -43,11 +40,9 @@ const BrandPage = () => {
         setSelBrand(brand);
         setSelModel(null);
         setSelEngine(null);
-        setStages([]);
         setEngineType(null);
         setSelType(null);
         setTypes([]);
-        setShowResults(false);
         setLoading(true);
 
         try {
@@ -65,8 +60,6 @@ const BrandPage = () => {
         setSelType(null);
         setEngines([]);
         setSelEngine(null);
-        setStages([]);
-        setShowResults(false);
 
         const modelId = parseInt(e.target.value);
         const model = models.find(m => m.id === modelId);
@@ -91,9 +84,7 @@ const BrandPage = () => {
         setSelType(type);
         setEngines([]);
         setSelEngine(null);
-        setStages([]);
         setEngineType(null);
-        setShowResults(false);
 
         if (type) {
             setLoading(true);
@@ -111,32 +102,27 @@ const BrandPage = () => {
     const handleEngineType = useCallback((e) => {
         setEngineType(e.target.value || null);
         setSelEngine(null);
-        setStages([]);
-        setShowResults(false);
     }, []);
 
     const handleEngine = useCallback((e) => {
         const engineId = parseInt(e.target.value);
         const engine = engines.find(eng => eng.id === engineId);
         setSelEngine(engine);
-        setStages([]);
-        setShowResults(false);
     }, [engines]);
 
-    const handleSearch = useCallback(async () => {
-        if (!selEngine) return;
+    const handleSearch = useCallback(() => {
+        if (!selEngine || !selBrand || !selModel || !selType) return;
 
-        setLoading(true);
-        try {
-            const data = await fetchAPI(`stages?engineId=${selEngine.id}`);
-            setStages(data);
-            setShowResults(true);
-        } catch (error) {
-            console.error("Error fetching stages:", error);
-            setStages([]);
-        }
-        setLoading(false);
-    }, [selEngine, fetchAPI]);
+        // Navigate to results page with URL params and state
+        const url = `/results/${encodeURIComponent(selBrand.name)}/${encodeURIComponent(selModel.name)}/${encodeURIComponent(selType.name)}/${selEngine.id}`;
+        navigate(url, {
+            state: {
+                engineName: selEngine.name,
+                engineDescription: selEngine.description,
+                engineType: selEngine.type
+            }
+        });
+    }, [selEngine, selBrand, selModel, selType, navigate]);
 
     const filteredEngines = useMemo(() => {
         if (!engineType) return engines;
@@ -314,70 +300,6 @@ const BrandPage = () => {
                     {loading && (
                         <div className="flex-center" style={{ padding: '40px 0' }}>
                             <div className="spinner"></div>
-                        </div>
-                    )}
-
-                    {/* Results Section */}
-                    {showResults && !loading && (
-                        <div className="results-section animate-in">
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px',
-                                marginBottom: '24px'
-                            }}>
-                                <Zap size={24} color="var(--primary)" />
-                                <h2 style={{ margin: 0 }}>Performance Stages</h2>
-                            </div>
-
-                            {/* Selected Vehicle Summary */}
-                            <div className="card" style={{
-                                marginBottom: '24px',
-                                borderLeft: '4px solid var(--primary)'
-                            }}>
-                                <p style={{ margin: 0, color: 'var(--text-muted)' }}>
-                                    <strong style={{ color: 'var(--text-main)' }}>
-                                        {selBrand.name} {selModel?.name}
-                                    </strong>
-                                    {' '}&bull;{' '}
-                                    {selType?.name}
-                                    {' '}&bull;{' '}
-                                    <span style={{ color: 'var(--primary)' }}>
-                                        {selEngine?.name} {selEngine?.description}
-                                    </span>
-                                </p>
-                            </div>
-
-                            {stages.length > 0 ? (
-                                stages.map((stage, index) => (
-                                    <StageCard
-                                        key={stage.id}
-                                        stage={stage}
-                                        style={{ animationDelay: `${index * 0.1}s` }}
-                                    />
-                                ))
-                            ) : (
-                                <div className="card" style={{
-                                    borderLeft: '4px solid var(--warning)',
-                                    textAlign: 'center',
-                                    padding: '40px'
-                                }}>
-                                    <p style={{
-                                        color: 'var(--warning)',
-                                        margin: 0,
-                                        fontSize: '1.1rem'
-                                    }}>
-                                        Geen tuning pakketten beschikbaar voor deze motor.
-                                    </p>
-                                    <p style={{
-                                        color: 'var(--text-muted)',
-                                        margin: '12px 0 0 0',
-                                        fontSize: '0.9rem'
-                                    }}>
-                                        Neem contact met ons op voor een offerte op maat.
-                                    </p>
-                                </div>
-                            )}
                         </div>
                     )}
                 </div>

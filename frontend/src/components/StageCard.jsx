@@ -1,168 +1,256 @@
 import React from 'react';
-import { Shield } from 'lucide-react';
+import { Zap, TrendingUp, Wrench, Euro, Info } from 'lucide-react';
 
-const StageCard = ({ stage }) => {
+const StageCard = ({ stage, style }) => {
     const gainHp = stage.tunedHp - stage.stockHp;
     const gainNm = stage.tunedNm - stage.stockNm;
+    const gainHpPercent = ((gainHp / stage.stockHp) * 100).toFixed(0);
+    const gainNmPercent = ((gainNm / stage.stockNm) * 100).toFixed(0);
+
+    // Calculate bar widths (max 100%)
+    const maxHp = Math.max(stage.tunedHp, stage.stockHp);
+    const maxNm = Math.max(stage.tunedNm, stage.stockNm);
+    const stockHpWidth = (stage.stockHp / maxHp) * 100;
+    const tunedHpWidth = (stage.tunedHp / maxHp) * 100;
+    const stockNmWidth = (stage.stockNm / maxNm) * 100;
+    const tunedNmWidth = (stage.tunedNm / maxNm) * 100;
 
     return (
-        <>
-            <style>
-                {`/* EngineTuningTable.css */
+        <div className="stage-card animate-in" style={style}>
+            {/* Header with Stage Name and Price */}
+            <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                marginBottom: '24px',
+                paddingBottom: '16px',
+                borderBottom: '1px solid var(--border)'
+            }}>
+                <div>
+                    <h3 style={{
+                        margin: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        fontSize: '1.4rem'
+                    }}>
+                        <Zap size={22} />
+                        {stage.stageName}
+                    </h3>
+                    {stage.ecuType && (
+                        <p style={{
+                            margin: '8px 0 0 0',
+                            color: 'var(--text-muted)',
+                            fontSize: '0.85rem'
+                        }}>
+                            ECU: {stage.ecuType}
+                        </p>
+                    )}
+                </div>
+                {stage.price != null && (
+                    <div style={{ textAlign: 'right' }}>
+                        <div className="price-tag">
+                            <Euro size={20} style={{ verticalAlign: 'middle' }} />
+                            {stage.price.toFixed(0)},-
+                        </div>
+                        <p style={{
+                            margin: '4px 0 0 0',
+                            color: 'var(--text-muted)',
+                            fontSize: '0.75rem',
+                            textTransform: 'uppercase'
+                        }}>
+                            incl. BTW
+                        </p>
+                    </div>
+                )}
+            </div>
 
-.card {
-  background: var(--bg-card, #f7f7f7);
-  padding: 20px;
-  border-radius: 8px;
-  margin: 20px auto;
-  max-width: 900px;
-  font-family: system-ui, sans-serif;
-}
+            {/* Power Stats Grid */}
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(2, 1fr)',
+                gap: '24px',
+                marginBottom: '24px'
+            }}>
+                {/* Horsepower Section */}
+                <div>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px'
+                    }}>
+                        <span style={{
+                            fontSize: '0.8rem',
+                            color: 'var(--text-muted)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px'
+                        }}>
+                            Vermogen (PK)
+                        </span>
+                        <div className="gain-badge">
+                            <TrendingUp size={14} />
+                            +{gainHp} PK
+                        </div>
+                    </div>
 
-.card-title {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-}
+                    {/* Stock HP Bar */}
+                    <div className="power-bar-container" style={{ marginBottom: '6px' }}>
+                        <div
+                            className="power-bar power-bar-stock"
+                            style={{ width: `${stockHpWidth}%` }}
+                        >
+                            <span className="power-value">{stage.stockHp}</span>
+                        </div>
+                    </div>
+                    <p style={{
+                        fontSize: '0.7rem',
+                        color: 'var(--text-muted)',
+                        margin: '0 0 8px 0'
+                    }}>
+                        Origineel
+                    </p>
 
-.table-container {
-  width: 100%;
-  overflow-x: auto; /* horizontal scroll on small screens */
-}
-
-.responsive-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.responsive-table td {
-  padding: 12px 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.responsive-table .highlight {
-  color: var(--primary);
-  font-weight: bold;
-}
-
-.responsive-table .success {
-  color: var(--success);
-  font-weight: bold;
-}
-
-.responsive-table .warning {
-  color: var(--warning);
-}
-
-.responsive-table .price {
-  color: var(--secondary);
-  font-weight: bold;
-}
-
-/* Mobile: stacked rows (card‑like) for better readability */
-@media (max-width: 600px) {
-  .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
-    display: block;
-    width: 100%;
-  }
-  .responsive-table tr {
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 10px;
-  }
-  .responsive-table td {
-    padding-left: 50%;
-    text-align: left;
-    position: relative;
-  }
-  .responsive-table td::before {
-    content: attr(data-label) ": ";
-    position: absolute;
-    left: 10px;
-    width: 45%;
-    font-weight: bold;
-  }
-}
-`}
-            </style>
-            <div className="card animate-in" style={{ marginBottom: '20px', borderLeft: '4px solid var(--primary)' }}>
-                <div className="flex-between">
-                    <h3>{stage.stageName}</h3>
+                    {/* Tuned HP Bar */}
+                    <div className="power-bar-container">
+                        <div
+                            className="power-bar power-bar-tuned"
+                            style={{ width: `${tunedHpWidth}%` }}
+                        >
+                            <span className="power-value" style={{ color: '#1a1a1a' }}>
+                                {stage.tunedHp}
+                            </span>
+                        </div>
+                    </div>
+                    <p style={{
+                        fontSize: '0.7rem',
+                        color: 'var(--primary)',
+                        margin: '4px 0 0 0',
+                        fontWeight: '600'
+                    }}>
+                        Na tuning (+{gainHpPercent}%)
+                    </p>
                 </div>
 
-                <div className="table-container py-2 px-3">
-                    <table className="responsive-table">
-                        <tbody>
-                            {/* <tr>
-                                <td data-label="Engine type">Engine type</td>
-                                <td data-label="Value"><strong>{stage.engineType}</strong></td>
-                            </tr> */}
-                            {/* <tr>
-                                <td data-label="Engine size">Engine size</td>
-                                <td data-label="Value">
-                                    <strong>{stage.engineSizeCm} cm<sup>3</sup></strong>
-                                </td>
-                            </tr> */}
-                            <tr>
-                                <td data-label="ECU type">ECU type</td>
-                                <td data-label="Value"><strong>{stage.ecuType}</strong></td>
-                            </tr>
+                {/* Torque Section */}
+                <div>
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        marginBottom: '8px'
+                    }}>
+                        <span style={{
+                            fontSize: '0.8rem',
+                            color: 'var(--text-muted)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px'
+                        }}>
+                            Koppel (Nm)
+                        </span>
+                        <div className="gain-badge">
+                            <TrendingUp size={14} />
+                            +{gainNm} Nm
+                        </div>
+                    </div>
 
-                            <tr>
-                                <td data-label="Stock Power">Stock Power</td>
-                                <td data-label="Value"><strong>{stage.stockHp} HP / {stage.stockNm} Nm</strong></td>
-                            </tr>
+                    {/* Stock Nm Bar */}
+                    <div className="power-bar-container" style={{ marginBottom: '6px' }}>
+                        <div
+                            className="power-bar power-bar-stock"
+                            style={{ width: `${stockNmWidth}%` }}
+                        >
+                            <span className="power-value">{stage.stockNm}</span>
+                        </div>
+                    </div>
+                    <p style={{
+                        fontSize: '0.7rem',
+                        color: 'var(--text-muted)',
+                        margin: '0 0 8px 0'
+                    }}>
+                        Origineel
+                    </p>
 
-                            <tr>
-                                <td data-label="Tuned Power">Tuned Power</td>
-                                <td data-label="Value" >
-                                    {stage.tunedHp} HP / {stage.tunedNm} Nm
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td data-label="Gain">Gain</td>
-                                <td data-label="Value" >
-                                    +{gainHp} HP / +{gainNm} Nm
-                                </td>
-                            </tr>
-
-                            {stage.notes && (
-                                <tr>
-                                    <td data-label="Notes">Notes</td>
-                                    <td data-label="Value">{stage.notes}</td>
-                                </tr>
-                            )}
-
-                            {stage.ecuNotes && (
-                                <tr>
-                                    <td data-label="ECU/CPC Requirement">ECU/CPC Requirement</td>
-                                    <td data-label="Value">{stage.ecuNotes}</td>
-                                </tr>
-                            )}
-
-                            {(stage.cpcUpgrade || stage.ecuUnlock) && (
-                                <tr>
-                                    <td data-label="Upgrades Required">Upgrades Required</td>
-                                    <td data-label="Value" >
-                                        {stage.cpcUpgrade && "CPC Upgrade "}
-                                        {stage.ecuUnlock && "ECU Unlock"}
-                                    </td>
-                                </tr>
-                            )}
-
-                            {stage.price != null && (
-                                <tr>
-                                    <td data-label="Price">Price</td>
-                                    <td data-label="Value" className="price">€{stage.price.toFixed(2)}</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                    {/* Tuned Nm Bar */}
+                    <div className="power-bar-container">
+                        <div
+                            className="power-bar power-bar-tuned"
+                            style={{ width: `${tunedNmWidth}%` }}
+                        >
+                            <span className="power-value" style={{ color: '#1a1a1a' }}>
+                                {stage.tunedNm}
+                            </span>
+                        </div>
+                    </div>
+                    <p style={{
+                        fontSize: '0.7rem',
+                        color: 'var(--primary)',
+                        margin: '4px 0 0 0',
+                        fontWeight: '600'
+                    }}>
+                        Na tuning (+{gainNmPercent}%)
+                    </p>
                 </div>
             </div>
 
-        </>
+            {/* Additional Info Section */}
+            {(stage.notes || stage.ecuNotes || stage.cpcUpgrade || stage.ecuUnlock) && (
+                <div style={{
+                    background: 'var(--bg-input)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    marginTop: '16px'
+                }}>
+                    {stage.notes && (
+                        <div style={{
+                            display: 'flex',
+                            gap: '10px',
+                            marginBottom: stage.ecuNotes || stage.cpcUpgrade || stage.ecuUnlock ? '12px' : 0
+                        }}>
+                            <Info size={16} color="var(--secondary)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                            <p style={{
+                                margin: 0,
+                                color: 'var(--text-muted)',
+                                fontSize: '0.9rem'
+                            }}>
+                                {stage.notes}
+                            </p>
+                        </div>
+                    )}
+
+                    {(stage.cpcUpgrade || stage.ecuUnlock || stage.ecuNotes) && (
+                        <div style={{
+                            display: 'flex',
+                            gap: '10px',
+                            alignItems: 'flex-start'
+                        }}>
+                            <Wrench size={16} color="var(--warning)" style={{ flexShrink: 0, marginTop: '2px' }} />
+                            <div>
+                                {stage.ecuNotes && (
+                                    <p style={{
+                                        margin: 0,
+                                        color: 'var(--warning)',
+                                        fontSize: '0.85rem',
+                                        fontWeight: '500'
+                                    }}>
+                                        {stage.ecuNotes}
+                                    </p>
+                                )}
+                                {(stage.cpcUpgrade || stage.ecuUnlock) && (
+                                    <p style={{
+                                        margin: stage.ecuNotes ? '6px 0 0 0' : 0,
+                                        color: 'var(--text-muted)',
+                                        fontSize: '0.85rem'
+                                    }}>
+                                        Vereist: {stage.cpcUpgrade && "CPC Upgrade"}{stage.cpcUpgrade && stage.ecuUnlock && " + "}{stage.ecuUnlock && "ECU Unlock"}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
+        </div>
     );
 };
 

@@ -8,7 +8,7 @@ This guide covers deploying Supreme Tuning to AWS EC2 using GitHub Actions self-
 
 ## Prerequisites
 
-- AWS EC2 instance (Amazon Linux 2023 recommended)
+- AWS EC2 instance (Amazon Linux 2023)
 - GitHub repository
 - SSH access to EC2 instance
 
@@ -44,6 +44,12 @@ chmod +x setup-aws-ec2.sh
 # Log out and log back in for Docker group to take effect
 exit
 ```
+
+This script installs:
+- Node.js and npm
+- Docker
+- Docker Compose plugin
+- Docker Buildx plugin
 
 ---
 
@@ -104,16 +110,16 @@ The GitHub Action will automatically:
 docker ps
 
 # View application logs
-docker-compose logs -f
+docker compose logs -f
 
 # Restart application
-docker-compose restart
+docker compose restart
 
 # Stop application
-docker-compose down
+docker compose down
 
 # Rebuild and restart
-docker-compose up -d --build
+docker compose up -d --build
 
 # Check runner status
 cd /home/ec2-user/actions-runner
@@ -126,7 +132,7 @@ sudo ./svc.sh status
 
 ### Application not starting
 ```bash
-docker-compose logs supreme-tuning
+docker compose logs supreme-tuning
 ```
 
 ### Port 3000 in use

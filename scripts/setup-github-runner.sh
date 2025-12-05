@@ -1,5 +1,5 @@
 #!/bin/bash
-# GitHub Actions Self-Hosted Runner Setup for AWS EC2 Amazon Linux
+# GitHub Actions Self-Hosted Runner Setup for AWS EC2 Amazon Linux 2023
 # Run this script after setup-aws-ec2.sh
 
 set -e
@@ -25,6 +25,26 @@ fi
 
 GITHUB_REPO_URL=$1
 RUNNER_TOKEN=$2
+
+# Ensure Docker CLI plugins are available for runner
+echo "📦 Ensuring Docker CLI plugins are installed..."
+mkdir -p ~/.docker/cli-plugins
+
+# Install Docker Compose plugin if not exists
+if [ ! -f ~/.docker/cli-plugins/docker-compose ]; then
+    echo "Installing Docker Compose plugin..."
+    curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+      -o ~/.docker/cli-plugins/docker-compose
+    chmod +x ~/.docker/cli-plugins/docker-compose
+fi
+
+# Install Docker Buildx plugin if not exists
+if [ ! -f ~/.docker/cli-plugins/docker-buildx ]; then
+    echo "Installing Docker Buildx plugin..."
+    curl -L "https://github.com/docker/buildx/releases/download/v0.17.1/buildx-v0.17.1.linux-amd64" \
+      -o ~/.docker/cli-plugins/docker-buildx
+    chmod +x ~/.docker/cli-plugins/docker-buildx
+fi
 
 # Create runner directory
 echo "📁 Creating runner directory..."

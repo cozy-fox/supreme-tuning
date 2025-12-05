@@ -25,6 +25,11 @@ jobs:
         run: |
           docker compose down --remove-orphans || true
 
+      - name: Ensure data directory permissions
+        run: |
+          mkdir -p ./data/backups
+          chmod -R 777 ./data
+
       - name: Build and start containers
         run: |
           docker compose build --no-cache

@@ -146,7 +146,7 @@ export default function BrandSelector({ brand, models }) {
             <option value="">{t('selectEngine')}</option>
             {filteredEngines.map(e => (
               <option key={e.id} value={e.id}>
-                {e.name} - {e.description} ({e.type})
+                {e.name}{e.power ? ` ${e.power}hp` : ''} - {e.description} ({e.type})
               </option>
             ))}
           </select>

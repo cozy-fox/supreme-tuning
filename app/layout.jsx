@@ -40,7 +40,7 @@ export const metadata = {
     follow: true,
   },
   icons: {
-    icon: '/favicon.ico',
+    icon: '/assets/logo.ico',
   },
 };
 

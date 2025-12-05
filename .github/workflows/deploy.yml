@@ -1,0 +1,53 @@
+name: Deploy to AWS EC2
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create environment file
+        run: |
+          cat > .env << EOF
+          NODE_ENV=production
+          SITE_URL=${{ secrets.SITE_URL }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          EOF
+
+      - name: Stop existing containers
+        run: |
+          docker-compose down --remove-orphans || true
+
+      - name: Build and start containers
+        run: |
+          docker-compose build --no-cache
+          docker-compose up -d
+
+      - name: Wait for health check
+        run: |
+          echo "Waiting for application to be healthy..."
+          sleep 10
+          for i in {1..30}; do
+            if curl -f http://localhost:3000/api/health; then
+              echo "Application is healthy!"
+              exit 0
+            fi
+            echo "Attempt $i: Application not ready yet..."
+            sleep 5
+          done
+          echo "Application failed to become healthy"
+          docker-compose logs
+          exit 1
+
+      - name: Clean up old Docker images
+        run: |
+          docker image prune -f
+

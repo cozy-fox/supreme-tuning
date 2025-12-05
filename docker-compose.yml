@@ -1,0 +1,29 @@
+services:
+  # Supreme Tuning Next.js Application
+  supreme-tuning:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: supreme-tuning
+    ports:
+      - "3000:3000"
+    volumes:
+      # Persist data directory for JSON database
+      - ./data:/app/data
+    environment:
+      - NODE_ENV=production
+      - SITE_URL=${SITE_URL:-https://supremetuning.nl}
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key-change-in-production}
+    networks:
+      - supreme-tuning-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+networks:
+  supreme-tuning-network:
+    driver: bridge
+

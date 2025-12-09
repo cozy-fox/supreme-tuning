@@ -37,7 +37,7 @@ export default function BrandCard({ brand }) {
             borderRadius: '8px',
             fontSize: '2rem',
             fontWeight: 'bold',
-            color: '#c9a227',
+            color: '#a8b0b8',
           }}>
             {brand.name.charAt(0)}
           </div>
@@ -46,7 +46,7 @@ export default function BrandCard({ brand }) {
           marginTop: '12px',
           fontSize: '0.9rem',
           fontWeight: '600',
-          color: '#fff',
+          color: 'var(--text-main)',
           letterSpacing: '1px',
         }}>
           {brand.name}

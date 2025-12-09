@@ -3,12 +3,14 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
+import { useLanguage } from '@/components/LanguageContext';
 import Header from '@/components/Header';
 import { Shield, Database, Key, Save, RefreshCw, AlertCircle, Check, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function AdminPage() {
   const router = useRouter();
   const { isAdmin, isLoading, fetchAPI, logout } = useAuth();
+  const { t } = useLanguage();
 
   // Data editor state
   const [jsonData, setJsonData] = useState('');
@@ -41,7 +43,7 @@ export default function AdminPage() {
       const data = await fetchAPI('data', { isProtected: true });
       setJsonData(JSON.stringify(data, null, 2));
     } catch (error) {
-      setDataMessage({ type: 'error', text: 'Failed to load data: ' + error.message });
+      setDataMessage({ type: 'error', text: t('failedToLoad') + ': ' + error.message });
     }
     setDataLoading(false);
   };
@@ -57,12 +59,12 @@ export default function AdminPage() {
         isProtected: true,
         body: JSON.stringify(parsedData),
       });
-      setDataMessage({ type: 'success', text: 'Data saved successfully!' });
+      setDataMessage({ type: 'success', text: t('dataSavedSuccessfully') });
     } catch (error) {
       if (error instanceof SyntaxError) {
-        setDataMessage({ type: 'error', text: 'Invalid JSON format' });
+        setDataMessage({ type: 'error', text: t('invalidJsonFormat') });
       } else {
-        setDataMessage({ type: 'error', text: 'Failed to save: ' + error.message });
+        setDataMessage({ type: 'error', text: t('failedToSave') + ': ' + error.message });
       }
     }
     setDataSaving(false);
@@ -74,12 +76,12 @@ export default function AdminPage() {
     setCredsMessage({ type: '', text: '' });
 
     if (newPassword !== confirmPassword) {
-      setCredsMessage({ type: 'error', text: 'Passwords do not match' });
+      setCredsMessage({ type: 'error', text: t('passwordsDoNotMatch') });
       return;
     }
 
     if (newPassword.length < 6) {
-      setCredsMessage({ type: 'error', text: 'Password must be at least 6 characters' });
+      setCredsMessage({ type: 'error', text: t('passwordTooShort') });
       return;
     }
 
@@ -90,7 +92,7 @@ export default function AdminPage() {
         isProtected: true,
         body: JSON.stringify({ currentPassword, newUsername, newPassword }),
       });
-      setCredsMessage({ type: 'success', text: 'Credentials updated! Please login again.' });
+      setCredsMessage({ type: 'success', text: t('credentialsUpdated') });
       setCurrentPassword('');
       setNewUsername('');
       setNewPassword('');
@@ -111,7 +113,7 @@ export default function AdminPage() {
       <>
         <Header />
         <main className="container" style={{ padding: '60px 24px', textAlign: 'center' }}>
-          <p>Loading...</p>
+          <p>{t('loading')}</p>
         </main>
       </>
     );
@@ -127,7 +129,7 @@ export default function AdminPage() {
       <main className="container" style={{ padding: '40px 24px', maxWidth: '1200px' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{
-            background: 'linear-gradient(135deg, #c9a227 0%, #e0b830 100%)',
+            background: 'linear-gradient(135deg, #a8b0b8 0%, #d0d8e0 100%)',
             borderRadius: '50%',
             width: '64px',
             height: '64px',
@@ -138,12 +140,13 @@ export default function AdminPage() {
           }}>
             <Shield size={32} color="#1a1a1a" />
           </div>
-          <h1>Admin Dashboard</h1>
-          <p style={{ color: '#8a8a8a' }}>Manage your tuning database and credentials</p>
+          <h1>{t('adminDashboard')}</h1>
+          <p style={{ color: 'var(--text-muted)' }}>{t('manageDatabaseAndCredentials')}</p>
         </div>
 
         {/* Data Editor Section */}
         <DataEditorSection
+          t={t}
           showDataEditor={showDataEditor}
           setShowDataEditor={setShowDataEditor}
           jsonData={jsonData}
@@ -157,6 +160,7 @@ export default function AdminPage() {
 
         {/* Credentials Section */}
         <CredentialsSection
+          t={t}
           showCredentials={showCredentials}
           setShowCredentials={setShowCredentials}
           currentPassword={currentPassword}
@@ -178,7 +182,7 @@ export default function AdminPage() {
 
 // Data Editor Section Component
 function DataEditorSection({
-  showDataEditor, setShowDataEditor, jsonData, setJsonData,
+  t, showDataEditor, setShowDataEditor, jsonData, setJsonData,
   dataLoading, dataSaving, dataMessage, loadData, saveData
 }) {
   return (
@@ -194,8 +198,8 @@ function DataEditorSection({
         onClick={() => setShowDataEditor(!showDataEditor)}
       >
         <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
-          <Database size={24} color="#c9a227" />
-          Database Editor
+          <Database size={24} color="#a8b0b8" />
+          {t('databaseEditor')}
         </h3>
         {showDataEditor ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
       </div>
@@ -210,7 +214,7 @@ function DataEditorSection({
               style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
               <RefreshCw size={16} className={dataLoading ? 'spin' : ''} />
-              {dataLoading ? 'Loading...' : 'Load Data'}
+              {dataLoading ? t('loading') : t('loadData')}
             </button>
             <button
               onClick={saveData}
@@ -219,7 +223,7 @@ function DataEditorSection({
               style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
               <Save size={16} />
-              {dataSaving ? 'Saving...' : 'Save Data'}
+              {dataSaving ? t('saving') : t('saveData')}
             </button>
           </div>
 
@@ -245,22 +249,22 @@ function DataEditorSection({
           <textarea
             value={jsonData}
             onChange={(e) => setJsonData(e.target.value)}
-            placeholder="Click 'Load Data' to load the database..."
+            placeholder={t('loadDataPlaceholder')}
             style={{
               width: '100%',
               minHeight: '400px',
               fontFamily: 'monospace',
               fontSize: '12px',
-              background: '#0a0a0a',
-              border: '1px solid #333',
+              background: 'rgba(50, 55, 60, 0.5)',
+              border: '1px solid var(--border)',
               borderRadius: '8px',
               padding: '16px',
-              color: '#fff',
+              color: 'var(--text-main)',
               resize: 'vertical'
             }}
           />
-          <p style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-            ⚠️ Be careful when editing. Invalid JSON will not be saved.
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '8px' }}>
+            {t('jsonWarning')}
           </p>
         </div>
       )}
@@ -270,7 +274,7 @@ function DataEditorSection({
 
 // Credentials Section Component
 function CredentialsSection({
-  showCredentials, setShowCredentials,
+  t, showCredentials, setShowCredentials,
   currentPassword, setCurrentPassword,
   newUsername, setNewUsername,
   newPassword, setNewPassword,
@@ -290,8 +294,8 @@ function CredentialsSection({
         onClick={() => setShowCredentials(!showCredentials)}
       >
         <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
-          <Key size={24} color="#c9a227" />
-          Update Credentials
+          <Key size={24} color="#a8b0b8" />
+          {t('updateCredentials')}
         </h3>
         {showCredentials ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
       </div>
@@ -299,47 +303,43 @@ function CredentialsSection({
       {showCredentials && (
         <form onSubmit={updateCredentials} style={{ marginTop: '20px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <label>Current Password</label>
+            <label>{t('currentPassword')}</label>
             <input
               type="password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
-              placeholder="Enter current password"
               required
             />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <label>New Username</label>
+            <label>{t('newUsername')}</label>
             <input
               type="text"
               value={newUsername}
               onChange={(e) => setNewUsername(e.target.value)}
-              placeholder="Enter new username"
               required
               minLength={3}
             />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
-            <label>New Password</label>
+            <label>{t('newPassword')}</label>
             <input
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Enter new password (min 6 characters)"
               required
               minLength={6}
             />
           </div>
 
           <div style={{ marginBottom: '20px' }}>
-            <label>Confirm New Password</label>
+            <label>{t('confirmNewPassword')}</label>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
               required
             />
           </div>
@@ -370,7 +370,7 @@ function CredentialsSection({
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <Key size={16} />
-            {credsSaving ? 'Updating...' : 'Update Credentials'}
+            {credsSaving ? t('updating') : t('updateCredentials')}
           </button>
         </form>
       )}

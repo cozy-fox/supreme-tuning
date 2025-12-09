@@ -1,6 +1,5 @@
 import './globals.css';
 import { AuthProvider } from '@/components/AuthContext';
-import { ThemeProvider } from '@/components/ThemeContext';
 import { LanguageProvider } from '@/components/LanguageContext';
 
 export const metadata = {
@@ -48,15 +47,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="nl" data-theme="dark">
       <body>
-        <ThemeProvider>
-          <LanguageProvider>
-            <AuthProvider>
-              <div id="root">
-                {children}
-              </div>
-            </AuthProvider>
-          </LanguageProvider>
-        </ThemeProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <div id="root">
+              {children}
+            </div>
+          </AuthProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

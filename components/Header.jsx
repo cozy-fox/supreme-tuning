@@ -3,16 +3,14 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Shield, LogOut, Home, Sun, Moon, Globe } from 'lucide-react';
+import { Shield, LogOut, Home, Globe } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import { useTheme } from './ThemeContext';
 import { useLanguage } from './LanguageContext';
 import { useState, useRef, useEffect } from 'react';
 
 export default function Header() {
   const pathname = usePathname();
   const { isAdmin, logout } = useAuth();
-  const { theme, toggleTheme, mounted: themeMounted } = useTheme();
   const { language, changeLanguage, t, mounted: langMounted, languages } = useLanguage();
   const [langDropdown, setLangDropdown] = useState(false);
   const dropdownRef = useRef(null);
@@ -67,7 +65,7 @@ export default function Header() {
             <h1 style={{
               fontSize: '1.4rem',
               margin: 0,
-              background: 'linear-gradient(135deg, var(--primary) 0%, var(--text-main) 50%, var(--primary) 100%)',
+              background: 'linear-gradient(135deg, var(--primary) 0%, #ffffff 50%, var(--primary) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -77,7 +75,7 @@ export default function Header() {
             </h1>
             <p style={{
               fontSize: '0.65rem',
-              color: 'var(--text-muted)',
+              color: '#a0a5aa',
               margin: 0,
               letterSpacing: '3px',
               textTransform: 'uppercase',
@@ -89,26 +87,6 @@ export default function Header() {
 
         {/* Navigation */}
         <nav style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="btn-icon"
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            style={{
-              background: 'var(--chrome-gradient)',
-              border: '1px solid var(--border)',
-              borderRadius: '8px',
-              padding: '10px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {themeMounted && (theme === 'dark' ? <Sun size={18} color="var(--primary)" /> : <Moon size={18} color="var(--primary)" />)}
-          </button>
-
           {/* Language Selector */}
           <div ref={dropdownRef} style={{ position: 'relative' }}>
             <button

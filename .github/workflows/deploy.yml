@@ -35,20 +35,81 @@ jobs:
           if [ ! -f ./ssl/cert.pem ] || [ ! -f ./ssl/key.pem ]; then
             echo "Generating self-signed SSL certificates..."
             chmod +x scripts/generate-self-signed-cert.sh
-            # Get the EC2 instance public IP
-            EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "localhost")
-            echo "Generating certificate for IP: $EC2_IP"
+
+            # Try multiple methods to get the public IP
+            echo "Attempting to detect public IP address..."
+
+            # Method 1: EC2 metadata service (IMDSv2)
+            TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" --connect-timeout 2 2>/dev/null || echo "")
+            if [ -n "$TOKEN" ]; then
+              EC2_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4 --connect-timeout 2 2>/dev/null || echo "")
+              if [ -n "$EC2_IP" ]; then
+                echo "✓ Detected IP via IMDSv2: $EC2_IP"
+              fi
+            fi
+
+            # Method 2: EC2 metadata service (IMDSv1 - fallback)
+            if [ -z "$EC2_IP" ]; then
+              echo "Trying IMDSv1..."
+              EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 --connect-timeout 2 2>/dev/null || echo "")
+              if [ -n "$EC2_IP" ]; then
+                echo "✓ Detected IP via IMDSv1: $EC2_IP"
+              fi
+            fi
+
+            # Method 3: External IP service
+            if [ -z "$EC2_IP" ]; then
+              echo "Trying external IP service..."
+              EC2_IP=$(curl -s --connect-timeout 5 https://api.ipify.org 2>/dev/null || echo "")
+              if [ -n "$EC2_IP" ]; then
+                echo "✓ Detected IP via ipify.org: $EC2_IP"
+              fi
+            fi
+
+            # Method 4: Alternative external service
+            if [ -z "$EC2_IP" ]; then
+              echo "Trying alternative IP service..."
+              EC2_IP=$(curl -s --connect-timeout 5 https://ifconfig.me 2>/dev/null || echo "")
+              if [ -n "$EC2_IP" ]; then
+                echo "✓ Detected IP via ifconfig.me: $EC2_IP"
+              fi
+            fi
+
+            # Fallback to localhost if all else fails
+            if [ -z "$EC2_IP" ]; then
+              echo "⚠ Could not detect public IP, using localhost"
+              EC2_IP="localhost"
+            fi
+
+            echo "Generating certificate for: $EC2_IP"
             mkdir -p ssl
-            openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-              -keyout ssl/key.pem \
-              -out ssl/cert.pem \
-              -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=$EC2_IP" \
-              -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:$EC2_IP"
+
+            # Generate certificate with proper SAN handling
+            if [ "$EC2_IP" = "localhost" ]; then
+              # For localhost, use DNS entry only
+              echo "Creating certificate for localhost..."
+              openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+                -keyout ssl/key.pem \
+                -out ssl/cert.pem \
+                -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=localhost" \
+                -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+            else
+              # For IP address, include it in SAN
+              echo "Creating certificate for IP: $EC2_IP..."
+              openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+                -keyout ssl/key.pem \
+                -out ssl/cert.pem \
+                -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=$EC2_IP" \
+                -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:$EC2_IP"
+            fi
+
             chmod 644 ssl/cert.pem
             chmod 600 ssl/key.pem
-            echo "SSL certificates generated successfully!"
+            echo "✓ SSL certificates generated successfully for: $EC2_IP"
           else
             echo "SSL certificates already exist, skipping generation"
+            echo "Certificate details:"
+            openssl x509 -in ./ssl/cert.pem -noout -subject -dates 2>/dev/null || echo "Could not read certificate"
           fi
 
       - name: Build and start containers
@@ -73,17 +134,34 @@ jobs:
 
       - name: Display access information
         run: |
-          EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "localhost")
+          # Detect IP using same methods as certificate generation
+          TOKEN=$(curl -s -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600" --connect-timeout 2 2>/dev/null || echo "")
+          if [ -n "$TOKEN" ]; then
+            EC2_IP=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/public-ipv4 --connect-timeout 2 2>/dev/null || echo "")
+          fi
+          if [ -z "$EC2_IP" ]; then
+            EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 --connect-timeout 2 2>/dev/null || echo "")
+          fi
+          if [ -z "$EC2_IP" ]; then
+            EC2_IP=$(curl -s --connect-timeout 5 https://api.ipify.org 2>/dev/null || echo "localhost")
+          fi
+
           echo "=========================================="
-          echo "Deployment successful!"
+          echo "🎉 Deployment Successful!"
           echo "=========================================="
-          echo "Access your application at:"
-          echo "  HTTPS: https://$EC2_IP"
-          echo "  HTTP:  http://$EC2_IP (redirects to HTTPS)"
           echo ""
-          echo "Note: You will see a browser security warning"
-          echo "because this uses a self-signed certificate."
-          echo "Click 'Advanced' -> 'Proceed' to continue."
+          echo "Access your application at:"
+          echo "  🔒 HTTPS: https://$EC2_IP"
+          echo "  🌐 HTTP:  http://$EC2_IP (redirects to HTTPS)"
+          echo ""
+          echo "⚠️  Browser Security Warning:"
+          echo "You will see a security warning because this"
+          echo "uses a self-signed certificate. This is normal!"
+          echo ""
+          echo "To proceed:"
+          echo "  1. Click 'Advanced'"
+          echo "  2. Click 'Proceed to $EC2_IP (unsafe)'"
+          echo ""
           echo "=========================================="
 
       - name: Clean old images

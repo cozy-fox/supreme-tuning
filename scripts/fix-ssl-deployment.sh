@@ -14,11 +14,17 @@ echo ""
 echo "🔍 Detecting server IP address..."
 if command -v curl &> /dev/null; then
     # Try to get EC2 public IP
-    EC2_IP=$(curl -s --connect-timeout 2 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
-    
+    EC2_IP=$(curl -s --connect-timeout 5 http://169.254.169.254/latest/meta-data/public-ipv4 2>/dev/null || echo "")
+
     if [ -z "$EC2_IP" ]; then
+        echo "EC2 metadata not available, trying external IP service..."
         # Try to get public IP from external service
-        EC2_IP=$(curl -s --connect-timeout 2 https://api.ipify.org 2>/dev/null || echo "localhost")
+        EC2_IP=$(curl -s --connect-timeout 5 https://api.ipify.org 2>/dev/null || echo "")
+    fi
+
+    if [ -z "$EC2_IP" ]; then
+        echo "Could not detect public IP, using localhost"
+        EC2_IP="localhost"
     fi
 else
     EC2_IP="localhost"
@@ -47,13 +53,24 @@ echo "=========================================="
 # Create ssl directory
 mkdir -p ssl
 
-# Generate self-signed certificate
+# Generate self-signed certificate with proper SAN handling
 echo "Generating certificate for: $EC2_IP"
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout ssl/key.pem \
-    -out ssl/cert.pem \
-    -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=$EC2_IP" \
-    -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:$EC2_IP" 2>/dev/null
+
+if [ "$EC2_IP" = "localhost" ]; then
+    # For localhost, use DNS entry only
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout ssl/key.pem \
+        -out ssl/cert.pem \
+        -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=localhost" \
+        -addext "subjectAltName=DNS:localhost,IP:127.0.0.1" 2>/dev/null
+else
+    # For IP address, include it in SAN
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+        -keyout ssl/key.pem \
+        -out ssl/cert.pem \
+        -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=$EC2_IP" \
+        -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:$EC2_IP" 2>/dev/null
+fi
 
 # Set proper permissions
 chmod 644 ssl/cert.pem

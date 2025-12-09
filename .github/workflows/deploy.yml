@@ -30,6 +30,27 @@ jobs:
           mkdir -p ./data/backups
           chmod -R 777 ./data
 
+      - name: Generate SSL certificates if not exists
+        run: |
+          if [ ! -f ./ssl/cert.pem ] || [ ! -f ./ssl/key.pem ]; then
+            echo "Generating self-signed SSL certificates..."
+            chmod +x scripts/generate-self-signed-cert.sh
+            # Get the EC2 instance public IP
+            EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "localhost")
+            echo "Generating certificate for IP: $EC2_IP"
+            mkdir -p ssl
+            openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+              -keyout ssl/key.pem \
+              -out ssl/cert.pem \
+              -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=$EC2_IP" \
+              -addext "subjectAltName=DNS:localhost,IP:127.0.0.1,IP:$EC2_IP"
+            chmod 644 ssl/cert.pem
+            chmod 600 ssl/key.pem
+            echo "SSL certificates generated successfully!"
+          else
+            echo "SSL certificates already exist, skipping generation"
+          fi
+
       - name: Build and start containers
         run: |
           docker compose build --no-cache
@@ -39,7 +60,7 @@ jobs:
         run: |
           echo "Waiting for application to be healthy..."
           for i in {1..30}; do
-            if curl -f http://localhost:3000/api/health; then
+            if curl -k -f https://localhost/api/health || curl -f http://localhost:3000/api/health; then
               echo "Application is healthy!"
               exit 0
             fi
@@ -49,6 +70,21 @@ jobs:
           echo "Application failed to become healthy"
           docker compose logs
           exit 1
+
+      - name: Display access information
+        run: |
+          EC2_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "localhost")
+          echo "=========================================="
+          echo "Deployment successful!"
+          echo "=========================================="
+          echo "Access your application at:"
+          echo "  HTTPS: https://$EC2_IP"
+          echo "  HTTP:  http://$EC2_IP (redirects to HTTPS)"
+          echo ""
+          echo "Note: You will see a browser security warning"
+          echo "because this uses a self-signed certificate."
+          echo "Click 'Advanced' -> 'Proceed' to continue."
+          echo "=========================================="
 
       - name: Clean old images
         run: docker image prune -f

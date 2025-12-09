@@ -1,8 +1,10 @@
 # Supreme Tuning - Deployment Guide
 
-## AWS EC2 Deployment with GitHub Actions
+## AWS EC2 Deployment with GitHub Actions + HTTPS
 
-This guide covers deploying Supreme Tuning to AWS EC2 using GitHub Actions self-hosted runner.
+This guide covers deploying Supreme Tuning to AWS EC2 using GitHub Actions self-hosted runner with **HTTPS enabled** (no domain required).
+
+> 🔒 **For HTTPS-specific deployment guide, see [AWS-DEPLOYMENT-HTTPS.md](AWS-DEPLOYMENT-HTTPS.md)**
 
 ---
 
@@ -11,6 +13,7 @@ This guide covers deploying Supreme Tuning to AWS EC2 using GitHub Actions self-
 - AWS EC2 instance (Amazon Linux 2023)
 - GitHub repository
 - SSH access to EC2 instance
+- Ports 80 and 443 open in Security Group
 
 ---
 
@@ -22,12 +25,13 @@ This guide covers deploying Supreme Tuning to AWS EC2 using GitHub Actions self-
    - Storage: 20GB+ EBS
 
 2. **Configure Security Group:**
-   | Type  | Port | Source    | Description     |
-   |-------|------|-----------|-----------------|
-   | SSH   | 22   | Your IP   | SSH access      |
-   | HTTP  | 80   | 0.0.0.0/0 | Web traffic     |
-   | HTTPS | 443  | 0.0.0.0/0 | Secure traffic  |
-   | Custom| 3000 | 0.0.0.0/0 | Next.js (optional, can use nginx proxy) |
+   | Type  | Port | Source    | Description                    |
+   |-------|------|-----------|--------------------------------|
+   | SSH   | 22   | Your IP   | SSH access                     |
+   | HTTP  | 80   | 0.0.0.0/0 | HTTP (redirects to HTTPS)      |
+   | HTTPS | 443  | 0.0.0.0/0 | HTTPS (main access)            |
+
+   **Note:** Port 3000 is NOT exposed - all traffic goes through nginx with HTTPS.
 
 ---
 

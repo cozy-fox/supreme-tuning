@@ -47,11 +47,12 @@ export default function BrandCard({ brand }) {
         )}
         <p style={{
           marginTop: '12px',
-          fontSize: '0.9rem',
-          fontWeight: '600',
-          color: '#1a1a1a',
-          letterSpacing: '1px',
-          textShadow: '0 1px 2px rgba(255,255,255,0.3)',
+          fontSize: '0.95rem',
+          fontWeight: '700',
+          color: '#0a0a0a',
+          letterSpacing: '1.2px',
+          textShadow: '0 1px 3px rgba(255,255,255,0.5)',
+          textTransform: 'uppercase',
         }}>
           {brand.name}
         </p>

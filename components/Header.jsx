@@ -159,7 +159,7 @@ export default function Header() {
               style={{ padding: '10px 20px', fontSize: '0.85rem' }}
             >
               <Home size={16} />
-              {t('home')}
+              <span className="btn-text">{t('home')}</span>
             </Link>
           )}
 
@@ -172,7 +172,7 @@ export default function Header() {
                   style={{ padding: '10px 20px', fontSize: '0.85rem' }}
                 >
                   <Shield size={16} />
-                  {t('admin')}
+                  <span className="btn-text">{t('admin')}</span>
                 </Link>
               )}
               <button
@@ -181,7 +181,7 @@ export default function Header() {
                 style={{ padding: '10px 20px', fontSize: '0.85rem' }}
               >
                 <LogOut size={16} />
-                {t('logout')}
+                <span className="btn-text">{t('logout')}</span>
               </button>
             </>
           ) : (
@@ -191,7 +191,7 @@ export default function Header() {
               style={{ padding: '10px 20px', fontSize: '0.85rem' }}
             >
               <Shield size={16} />
-              {t('login')}
+              <span className="btn-text">{t('login')}</span>
             </Link>
           )}
         </nav>

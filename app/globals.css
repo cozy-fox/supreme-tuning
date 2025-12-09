@@ -165,8 +165,8 @@ a {
 
 /* Brand Card specific styling */
 .brand-card {
-  background: var(--chrome-gradient);
-  border: 1px solid var(--border);
+  background: var(--chrome-gradient-strong);
+  border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 24px;
   cursor: pointer;
@@ -174,6 +174,7 @@ a {
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-silver);
 }
 
 .brand-card::before {
@@ -185,6 +186,7 @@ a {
   bottom: 0;
   background: var(--brushed-metal);
   pointer-events: none;
+  opacity: 0.5;
 }
 
 .brand-card::after {
@@ -193,18 +195,19 @@ a {
   top: 0;
   left: 0;
   right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
 }
 
 .brand-card:hover {
   border-color: var(--primary);
-  box-shadow: var(--shadow-glow);
+  box-shadow: 0 8px 30px rgba(184, 192, 200, 0.4);
   transform: translateY(-4px);
+  background: linear-gradient(180deg, #d0d8e0 0%, #b0b8c0 50%, #c0c8d0 100%);
 }
 
 .brand-card:hover img {
-  filter: brightness(1.2);
+  filter: brightness(1.1);
 }
 
 /* Flex utilities */
@@ -992,7 +995,10 @@ input::placeholder {
 
 @media (max-width: 768px) {
   .container { padding: 0 16px; }
-  h1 { font-size: 2rem; }
+  h1 {
+    font-size: 1.8rem !important;
+    line-height: 1.2;
+  }
   h2 { font-size: 1.5rem; }
   .grid-brands { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
   .brand-card { padding: 16px; }
@@ -1005,6 +1011,55 @@ input::placeholder {
   .btn-search-modern {
     width: 100%;
     padding: 16px 32px;
+  }
+
+  /* Header responsive */
+  header {
+    padding: 10px 16px !important;
+  }
+
+  header h1 {
+    font-size: 1.1rem !important;
+  }
+
+  header p {
+    font-size: 0.55rem !important;
+    letter-spacing: 2px !important;
+  }
+
+  header img {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  header nav {
+    gap: 8px !important;
+  }
+
+  .btn-secondary {
+    padding: 8px 12px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .btn-secondary .btn-text {
+    display: none;
+  }
+
+  .btn-icon {
+    padding: 8px 10px !important;
+  }
+
+  /* Hero section responsive */
+  .hero-section {
+    padding: 40px 0 30px !important;
+  }
+
+  .hero-section h1 {
+    font-size: 1.8rem !important;
+  }
+
+  .hero-section p {
+    font-size: 0.95rem !important;
   }
 }
 
@@ -1022,8 +1077,38 @@ input::placeholder {
     width: 100%;
     text-align: center;
   }
+
+  /* Even smaller header */
+  header h1 {
+    font-size: 1rem !important;
+  }
+
+  header p {
+    display: none;
+  }
+
+  header img {
+    width: 35px !important;
+    height: 35px !important;
+  }
 }
 
 @media (max-width: 480px) {
   .grid-brands { grid-template-columns: repeat(2, 1fr); }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .hero-section h1 {
+    font-size: 1.5rem !important;
+  }
+
+  .hero-section p {
+    font-size: 0.85rem !important;
+  }
+
+  .container {
+    padding: 0 12px !important;
+  }
 }

@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
+import { useLanguage } from '@/components/LanguageContext';
 import Header from '@/components/Header';
 import { Shield, User, Lock } from 'lucide-react';
 
 export default function LoginPage() {
   const router = useRouter();
   const { login } = useAuth();
+  const { t } = useLanguage();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,7 +26,7 @@ export default function LoginPage() {
     if (result.success) {
       router.push('/admin');
     } else {
-      setError(result.error || 'Ongeldige inloggegevens');
+      setError(result.error || t('invalidCredentials'));
     }
 
     setLoading(false);
@@ -33,7 +35,7 @@ export default function LoginPage() {
   return (
     <>
       <Header />
-      <main className="container" style={{ 
+      <main className="container" style={{
         padding: '60px 24px',
         display: 'flex',
         justifyContent: 'center',
@@ -54,31 +56,31 @@ export default function LoginPage() {
             }}>
               <Shield size={32} color="#1a1a1a" />
             </div>
-            <h2 style={{ margin: 0 }}>Admin Login</h2>
+            <h2 style={{ margin: 0 }}>{t('adminLogin')}</h2>
             <p style={{ color: '#8a8a8a', marginTop: '8px' }}>
-              Voer uw inloggegevens in
+              {t('enterCredentials')}
             </p>
           </div>
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '20px' }}>
-              <label><User size={14} style={{ marginRight: '8px' }} />Gebruikersnaam</label>
+              <label><User size={14} style={{ marginRight: '8px' }} />{t('username')}</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Gebruikersnaam"
+                placeholder={t('username')}
                 required
               />
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <label><Lock size={14} style={{ marginRight: '8px' }} />Wachtwoord</label>
+              <label><Lock size={14} style={{ marginRight: '8px' }} />{t('password')}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Wachtwoord"
+                placeholder={t('password')}
                 required
               />
             </div>
@@ -102,7 +104,7 @@ export default function LoginPage() {
               className="btn btn-search"
               disabled={loading}
             >
-              {loading ? 'Inloggen...' : 'Inloggen'}
+              {loading ? t('loggingIn') : t('login')}
             </button>
           </form>
         </div>

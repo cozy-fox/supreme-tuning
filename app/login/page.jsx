@@ -45,7 +45,7 @@ export default function LoginPage() {
         <div className="card" style={{ maxWidth: '400px', width: '100%' }}>
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
             <div style={{
-              background: 'linear-gradient(135deg, #c9a227 0%, #e0b830 100%)',
+              background: 'linear-gradient(135deg, #b8c0c8 0%, #d0d8e0 100%)',
               borderRadius: '50%',
               width: '64px',
               height: '64px',
@@ -53,11 +53,12 @@ export default function LoginPage() {
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 16px',
+              boxShadow: '0 4px 15px rgba(184, 192, 200, 0.3)',
             }}>
               <Shield size={32} color="#1a1a1a" />
             </div>
             <h2 style={{ margin: 0 }}>{t('adminLogin')}</h2>
-            <p style={{ color: '#8a8a8a', marginTop: '8px' }}>
+            <p style={{ color: '#a0a8b0', marginTop: '8px' }}>
               {t('enterCredentials')}
             </p>
           </div>

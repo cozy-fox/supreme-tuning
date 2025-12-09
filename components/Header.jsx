@@ -65,17 +65,18 @@ export default function Header() {
             <h1 style={{
               fontSize: '1.4rem',
               margin: 0,
-              background: 'linear-gradient(135deg, var(--primary) 0%, #ffffff 50%, var(--primary) 100%)',
+              background: 'linear-gradient(135deg, #d0d8e0 0%, #ffffff 50%, #d0d8e0 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
               letterSpacing: '2px',
+              filter: 'drop-shadow(0 2px 4px rgba(184, 192, 200, 0.3))',
             }}>
               SUPREME
             </h1>
             <p style={{
               fontSize: '0.65rem',
-              color: '#a0a5aa',
+              color: '#b8c0c8',
               margin: 0,
               letterSpacing: '3px',
               textTransform: 'uppercase',

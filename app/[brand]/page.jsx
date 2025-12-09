@@ -8,7 +8,7 @@ import BrandSelector from './BrandSelector';
 export async function generateStaticParams() {
   const brands = await getBrands();
   return brands.map((brand) => ({
-    brand: brand.name.toLowerCase(),
+    brand: brand.name.toLowerCase().replace(/\s+/g, '-'),
   }));
 }
 
@@ -16,8 +16,10 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const { brand: brandSlug } = await params;
   const brands = await getBrands();
-  const brand = brands.find(b => b.name.toLowerCase() === brandSlug.toLowerCase());
-  
+  // Convert slug back to brand name (replace hyphens with spaces)
+  const brandName = brandSlug.replace(/-/g, ' ');
+  const brand = brands.find(b => b.name.toLowerCase() === brandName.toLowerCase());
+
   if (!brand) return {};
 
   return generateSeoMetadata({
@@ -30,7 +32,9 @@ export async function generateMetadata({ params }) {
 export default async function BrandPage({ params }) {
   const { brand: brandSlug } = await params;
   const brands = await getBrands();
-  const brand = brands.find(b => b.name.toLowerCase() === brandSlug.toLowerCase());
+  // Convert slug back to brand name (replace hyphens with spaces)
+  const brandName = brandSlug.replace(/-/g, ' ');
+  const brand = brands.find(b => b.name.toLowerCase() === brandName.toLowerCase());
 
   if (!brand) {
     notFound();
@@ -52,7 +56,7 @@ export default async function BrandPage({ params }) {
         {/* Hero */}
         <div className="hero-section">
           <h1>{brand.name} Chiptuning</h1>
-          <p style={{ color: '#8a8a8a', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
             Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken
           </p>
         </div>

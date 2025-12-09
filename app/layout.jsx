@@ -45,8 +45,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="nl" data-theme="dark">
-      <body>
+    <html lang="nl" data-theme="dark" className="notranslate" translate="no">
+      <head>
+        <meta name="google" content="notranslate" />
+      </head>
+      <body className="notranslate" translate="no">
         <LanguageProvider>
           <AuthProvider>
             <div id="root">

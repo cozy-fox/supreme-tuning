@@ -7,9 +7,12 @@ import { useState } from 'react';
 export default function BrandCard({ brand }) {
   const [imgError, setImgError] = useState(false);
 
+  // URL-safe brand name (replace spaces with hyphens)
+  const brandSlug = brand.name.toLowerCase().replace(/\s+/g, '-');
+
   return (
     <Link
-      href={`/${brand.name.toLowerCase()}`}
+      href={`/${brandSlug}`}
       className="brand-card"
     >
       <div style={{ position: 'relative', zIndex: 1 }}>
@@ -46,8 +49,9 @@ export default function BrandCard({ brand }) {
           marginTop: '12px',
           fontSize: '0.9rem',
           fontWeight: '600',
-          color: 'var(--text-main)',
+          color: '#1a1a1a',
           letterSpacing: '1px',
+          textShadow: '0 1px 2px rgba(255,255,255,0.3)',
         }}>
           {brand.name}
         </p>

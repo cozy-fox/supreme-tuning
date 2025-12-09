@@ -24,33 +24,13 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - /etc/letsencrypt:/etc/letsencrypt:ro
-      - certbot-webroot:/var/www/certbot:ro
+      - ./ssl:/etc/nginx/ssl:ro
     depends_on:
       - supreme-tuning
     networks:
       - supreme-tuning-network
     restart: unless-stopped
 
-  certbot:
-    image: certbot/certbot
-    container_name: supreme-certbot
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - certbot-webroot:/var/www/certbot
-    entrypoint: ""
-    command: >
-      certonly --webroot
-      --webroot-path=/var/www/certbot
-      --email ${CERTBOT_EMAIL:-admin@supremetuning.nl}
-      --agree-tos
-      --no-eff-email
-      -d supremetuning.nl
-      -d www.supremetuning.nl
-
 networks:
   supreme-tuning-network:
     driver: bridge
-
-volumes:
-  certbot-webroot:

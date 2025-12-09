@@ -1,8 +1,8 @@
-# 🔒 SSL Configuration - Changes Summary
+# 🔒 SSL Configuration - Changes Summary (Self-Signed Certificates)
 
 ## What Was Done
 
-Your Supreme Tuning Next.js project now has **complete SSL/HTTPS support** configured and ready to use!
+Your Supreme Tuning Next.js project now has **complete SSL/HTTPS support** using **self-signed certificates** - perfect for local development or when you don't have a domain!
 
 ---
 
@@ -10,35 +10,37 @@ Your Supreme Tuning Next.js project now has **complete SSL/HTTPS support** confi
 
 ### 1. **nginx.conf** ✅
 **Changes:**
-- Replaced placeholder `YOUR_DOMAIN_HERE` with `supremetuning.nl` and `www.supremetuning.nl`
+- Configured for self-signed SSL certificates (no domain required)
+- Uses `server_name _` to accept any hostname/IP
 - Enhanced SSL configuration with modern security settings
 - Added HTTP/2 support for better performance
-- Added security headers (HSTS, XSS Protection, etc.)
+- Added security headers (XSS Protection, clickjacking protection, etc.)
 - Improved proxy configuration for Next.js
 - Configured automatic HTTP to HTTPS redirect
+- Removed HSTS header (not suitable for self-signed certs)
 
 **Key Features:**
 - ✅ TLS 1.2 and 1.3 support
 - ✅ Strong cipher suites
-- ✅ HSTS with 1-year max-age
 - ✅ Security headers for XSS and clickjacking protection
 - ✅ Proper WebSocket support for Next.js hot reload
+- ✅ Works with localhost, IP addresses, or any hostname
 
 ### 2. **docker-compose.yml** ✅
 **Changes:**
-- Added `certbot-webroot` volume for SSL validation
-- Updated certbot configuration with proper domain names
-- Added `CERTBOT_EMAIL` environment variable support
-- Configured volumes with proper read-only permissions
+- Removed certbot service (not needed for self-signed certs)
+- Added `./ssl` volume mount for certificate files
+- Simplified configuration for local development
+- Removed Let's Encrypt specific volumes
 
 **Key Features:**
-- ✅ Automatic SSL certificate generation
-- ✅ Support for both `supremetuning.nl` and `www.supremetuning.nl`
-- ✅ Configurable email for SSL notifications
+- ✅ Simple SSL setup with local certificate files
+- ✅ No external dependencies
+- ✅ Works offline
 
 ### 3. **.env.example** ✅
 **Changes:**
-- Added `CERTBOT_EMAIL` variable for SSL certificate notifications
+- Removed `CERTBOT_EMAIL` variable (not needed for self-signed certs)
 
 ---
 
@@ -47,10 +49,10 @@ Your Supreme Tuning Next.js project now has **complete SSL/HTTPS support** confi
 ### 1. **SSL-SETUP.md** 📖
 Complete, detailed guide covering:
 - Prerequisites and requirements
-- Step-by-step SSL setup instructions
-- Certificate renewal configuration
+- Step-by-step self-signed SSL setup instructions
+- Certificate generation methods (automated and manual)
 - Troubleshooting common issues
-- Security best practices
+- Security features
 - Useful commands reference
 
 ### 2. **SSL-QUICK-START.md** 🚀
@@ -61,13 +63,20 @@ Quick reference guide with:
 - Troubleshooting tips
 - Summary of changes
 
-### 3. **scripts/setup-ssl.sh** 🔧
-Automated setup script that:
-- Verifies DNS configuration
-- Starts required services
-- Obtains SSL certificates
-- Configures HTTPS
-- Provides helpful feedback
+### 3. **scripts/generate-self-signed-cert.sh** 🔧 (Linux/Mac)
+Automated certificate generation script that:
+- Creates SSL directory
+- Generates self-signed certificates
+- Prompts for server IP/hostname
+- Sets proper file permissions
+- Provides helpful instructions
+
+### 4. **scripts/generate-self-signed-cert.ps1** 🔧 (Windows)
+PowerShell version of the certificate generation script with:
+- Same functionality as bash version
+- Windows-specific instructions
+- OpenSSL installation guidance
+- Colored output for better readability
 
 ---
 
@@ -75,25 +84,30 @@ Automated setup script that:
 
 ### Option 1: Automated Setup (Recommended)
 
+**Linux/Mac:**
 ```bash
-# Make script executable
-chmod +x scripts/setup-ssl.sh
+chmod +x scripts/generate-self-signed-cert.sh
+./scripts/generate-self-signed-cert.sh
+docker compose up -d
+```
 
-# Run the setup
-./scripts/setup-ssl.sh
+**Windows (PowerShell):**
+```powershell
+.\scripts\generate-self-signed-cert.ps1
+docker compose up -d
 ```
 
 ### Option 2: Manual Setup
 
 ```bash
-# 1. Start services
-docker compose up -d supreme-tuning nginx
+# 1. Generate certificate
+mkdir -p ssl
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout ssl/key.pem -out ssl/cert.pem \
+    -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=localhost"
 
-# 2. Get SSL certificate
-docker compose run --rm certbot
-
-# 3. Restart nginx
-docker compose restart nginx
+# 2. Start services
+docker compose up -d
 ```
 
 ---
@@ -102,31 +116,28 @@ docker compose restart nginx
 
 After running the setup:
 
-1. **HTTPS Access** - Your site will be accessible at `https://supremetuning.nl`
+1. **HTTPS Access** - Your site will be accessible at `https://localhost` or `https://YOUR_IP`
 2. **Automatic Redirect** - HTTP traffic automatically redirects to HTTPS
-3. **Valid SSL Certificate** - Free Let's Encrypt certificate (valid for 90 days)
+3. **Self-Signed Certificate** - Valid for 365 days (browser will show warning)
 4. **Security Headers** - Modern security headers enabled
 5. **HTTP/2 Support** - Faster page loads
-6. **A+ SSL Rating** - Configuration optimized for security
+6. **No Domain Required** - Works with IP addresses or localhost
 
 ---
 
 ## 🔄 Certificate Renewal
 
-Certificates expire every 90 days. Set up automatic renewal:
+Self-signed certificates are valid for **365 days**. To renew when expired:
 
+**Linux/Mac:**
 ```bash
-# Add to crontab
-crontab -e
-
-# Add this line (runs twice daily)
-0 0,12 * * * cd /path/to/supreme-tuning && docker compose run --rm certbot renew && docker compose restart nginx
+./scripts/generate-self-signed-cert.sh
+docker compose restart nginx
 ```
 
-Or renew manually:
-
-```bash
-docker compose run --rm certbot renew
+**Windows:**
+```powershell
+.\scripts\generate-self-signed-cert.ps1
 docker compose restart nginx
 ```
 
@@ -138,11 +149,13 @@ Your SSL configuration includes:
 
 - ✅ **TLS 1.2 & 1.3** - Latest encryption protocols
 - ✅ **Strong Ciphers** - ECDHE with AES-GCM
-- ✅ **HSTS** - Forces HTTPS for 1 year
 - ✅ **XSS Protection** - Prevents cross-site scripting
 - ✅ **Clickjacking Protection** - X-Frame-Options header
 - ✅ **MIME Sniffing Protection** - X-Content-Type-Options
 - ✅ **HTTP/2** - Modern protocol for better performance
+- ⚠️ **Self-Signed Certificate** - Browser will show security warning (normal)
+
+**Note:** HSTS is intentionally disabled for self-signed certificates to avoid browser caching issues.
 
 ---
 
@@ -151,18 +164,23 @@ Your SSL configuration includes:
 After setup, test your SSL configuration:
 
 1. **Browser Test:**
-   - Visit `https://supremetuning.nl`
-   - Check for 🔒 padlock icon
+   - Visit `https://localhost` (or your server IP)
+   - **Accept the security warning** (normal for self-signed certs)
+   - Check for 🔒 padlock icon (may show "Not Secure" due to self-signed cert)
    - Click padlock to view certificate details
 
-2. **SSL Labs Test:**
-   - Visit: https://www.ssllabs.com/ssltest/
-   - Enter your domain: `supremetuning.nl`
-   - Should get an **A or A+** rating
-
-3. **Command Line Test:**
+2. **Command Line Test:**
    ```bash
-   curl -I https://supremetuning.nl
+   # Test HTTPS (ignore certificate validation)
+   curl -k -I https://localhost
+
+   # View certificate details
+   openssl s_client -connect localhost:443 -showcerts
+   ```
+
+3. **Check Certificate Expiration:**
+   ```bash
+   openssl x509 -in ssl/cert.pem -noout -dates
    ```
 
 ---
@@ -171,21 +189,29 @@ After setup, test your SSL configuration:
 
 ### Issue: Certificate not found
 ```bash
-docker compose run --rm certbot
+# Generate certificates
+./scripts/generate-self-signed-cert.sh  # Linux/Mac
+.\scripts\generate-self-signed-cert.ps1  # Windows
 ```
 
-### Issue: Port 80 blocked
-Check firewall/security group allows port 80 and 443
+### Issue: OpenSSL not found (Windows)
+Install Git for Windows: https://git-scm.com/download/win
 
-### Issue: DNS not configured
+### Issue: Browser shows "Your connection is not private"
+**This is normal!** Self-signed certificates are not trusted by browsers.
+- Click "Advanced" → "Proceed to localhost (unsafe)"
+- This is safe for local development
+
+### Issue: Permission denied on ssl files
 ```bash
-nslookup supremetuning.nl
+chmod 644 ssl/cert.pem
+chmod 600 ssl/key.pem
 ```
 
 ### View logs
 ```bash
 docker compose logs nginx
-docker compose logs certbot
+docker compose logs supreme-tuning
 ```
 
 ---
@@ -200,13 +226,26 @@ docker compose logs certbot
 
 ## ✨ Next Steps
 
-1. ✅ Run the SSL setup script or manual commands
-2. ✅ Verify HTTPS is working in your browser
-3. ✅ Set up automatic certificate renewal
-4. ✅ Test SSL configuration at SSL Labs
-5. ✅ Update any hardcoded HTTP URLs to HTTPS
+1. ✅ Run the certificate generation script
+2. ✅ Start your application with `docker compose up -d`
+3. ✅ Visit `https://localhost` and accept the security warning
+4. ✅ Verify HTTPS is working
+5. ✅ Update your `SITE_URL` to use `https://`
+
+---
+
+## 🌐 For Production with a Real Domain
+
+If you later get a domain name, you can switch to Let's Encrypt for trusted certificates:
+
+1. Get a domain name and point it to your server
+2. Update `nginx.conf` with your domain
+3. Use Let's Encrypt/Certbot instead of self-signed certificates
+4. Follow standard Let's Encrypt setup guides
 
 ---
 
 **Your Supreme Tuning website is now ready for secure HTTPS connections! 🎉**
+
+**Note:** Self-signed certificates are perfect for local development but show browser warnings. For production with a real domain, use Let's Encrypt for trusted certificates.
 

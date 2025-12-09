@@ -1,6 +1,6 @@
 # 🔒 SSL/HTTPS Setup Guide for Supreme Tuning
 
-This guide will help you enable HTTPS for your Supreme Tuning website using Let's Encrypt SSL certificates.
+This guide will help you enable HTTPS for your Supreme Tuning website using **self-signed SSL certificates** (for local development or when you don't have a domain).
 
 ---
 
@@ -8,10 +8,9 @@ This guide will help you enable HTTPS for your Supreme Tuning website using Let'
 
 Before starting, ensure you have:
 
-1. **A domain name** (e.g., `supremetuning.nl`)
-2. **DNS configured** - Your domain's A record should point to your server's IP address
-3. **Ports 80 and 443 open** in your firewall/security group
-4. **Docker and Docker Compose** installed on your server
+1. **Docker and Docker Compose** installed on your server
+2. **OpenSSL** installed (usually comes with Git for Windows, or pre-installed on Linux/Mac)
+3. **Ports 80 and 443 open** in your firewall (if accessing from other machines)
 
 ---
 
@@ -19,81 +18,76 @@ Before starting, ensure you have:
 
 The SSL setup uses:
 - **Nginx** as a reverse proxy with SSL termination
-- **Let's Encrypt** for free SSL certificates
-- **Certbot** for automatic certificate generation and renewal
+- **Self-signed SSL certificates** for HTTPS (valid for 365 days)
+- Works with **IP addresses** or **localhost** (no domain required)
 
 ---
 
-## 🚀 Step 1: Update Environment Variables (Optional)
+## 🚀 Step 1: Generate Self-Signed SSL Certificate
 
-If you want to use a custom email for SSL certificate notifications, create or update your `.env` file:
+### Option A: Using the Automated Script (Easiest)
 
+**For Linux/Mac:**
 ```bash
-# Create .env file
-cat > .env << EOF
-NODE_ENV=production
-SITE_URL=https://supremetuning.nl
-JWT_SECRET=your-super-secret-jwt-key-change-in-production
-CERTBOT_EMAIL=admin@supremetuning.nl
-EOF
+chmod +x scripts/generate-self-signed-cert.sh
+./scripts/generate-self-signed-cert.sh
 ```
 
-**Note:** If you don't set `CERTBOT_EMAIL`, it will default to `admin@supremetuning.nl`
-
----
-
-## 🔧 Step 2: Verify DNS Configuration
-
-Before obtaining SSL certificates, verify your domain points to your server:
-
-```bash
-# Check if your domain resolves to your server IP
-nslookup supremetuning.nl
-
-# Or use dig
-dig supremetuning.nl +short
+**For Windows (PowerShell):**
+```powershell
+.\scripts\generate-self-signed-cert.ps1
 ```
 
-The output should show your server's public IP address.
+The script will:
+- Create an `ssl` directory
+- Generate `cert.pem` and `key.pem` files
+- Prompt you for your server IP or hostname
+- Set proper permissions
+
+### Option B: Manual Generation
+
+**Using OpenSSL directly:**
+```bash
+# Create ssl directory
+mkdir -p ssl
+
+# Generate certificate (replace localhost with your IP if needed)
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout ssl/key.pem \
+    -out ssl/cert.pem \
+    -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=localhost" \
+    -addext "subjectAltName=DNS:localhost,IP:127.0.0.1"
+```
+
+**Using Docker (if OpenSSL not installed):**
+```bash
+mkdir -p ssl
+docker run --rm -v ${PWD}/ssl:/ssl alpine/openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    -keyout /ssl/key.pem \
+    -out /ssl/cert.pem \
+    -subj "/C=NL/ST=Netherlands/L=Amsterdam/O=Supreme Tuning/OU=IT/CN=localhost"
+```
 
 ---
 
-## 📜 Step 3: Obtain SSL Certificates
-
-### First-time SSL Certificate Setup
-
-1. **Start only the web server (without SSL first):**
+## 🔧 Step 2: Start the Application with HTTPS
 
 ```bash
-# Stop all containers if running
+# Stop any running containers
 docker compose down
 
-# Start only the supreme-tuning and nginx services
-docker compose up -d supreme-tuning nginx
-```
-
-2. **Obtain the SSL certificate:**
-
-```bash
-# Run certbot to get certificates
-docker compose run --rm certbot
+# Start all services
+docker compose up -d
 ```
 
 This will:
-- Validate domain ownership via HTTP challenge
-- Generate SSL certificates
-- Store them in `/etc/letsencrypt/`
-
-3. **Restart Nginx with SSL enabled:**
-
-```bash
-# Restart nginx to load the new certificates
-docker compose restart nginx
-```
+- Start the Next.js application
+- Start Nginx with SSL enabled
+- Automatically redirect HTTP to HTTPS
 
 ---
 
-## 🎯 Step 4: Verify HTTPS is Working
+## 🎯 Step 3: Verify HTTPS is Working
 
 1. **Check if containers are running:**
 
@@ -107,40 +101,36 @@ You should see:
 
 2. **Test HTTPS in your browser:**
 
-Open: `https://supremetuning.nl`
+Open: `https://localhost` (or `https://YOUR_SERVER_IP`)
 
-You should see:
-- 🔒 Padlock icon in the address bar
-- Valid SSL certificate
+**⚠️ You will see a security warning** - This is normal for self-signed certificates!
+
+**To proceed:**
+- **Chrome/Edge:** Click "Advanced" → "Proceed to localhost (unsafe)"
+- **Firefox:** Click "Advanced" → "Accept the Risk and Continue"
+- **Safari:** Click "Show Details" → "visit this website"
+
+After accepting, you should see:
+- 🔒 Padlock icon (may show "Not Secure" due to self-signed cert)
 - Your website loading over HTTPS
 
 3. **Test HTTP to HTTPS redirect:**
 
-Open: `http://supremetuning.nl`
+Open: `http://localhost`
 
-It should automatically redirect to `https://supremetuning.nl`
+It should automatically redirect to `https://localhost`
 
 ---
 
-## 🔄 Step 5: Automatic Certificate Renewal
+## 🔄 Step 4: Certificate Renewal
 
-Let's Encrypt certificates expire after 90 days. Set up automatic renewal:
-
-### Option A: Using Cron (Recommended)
+Self-signed certificates are valid for **365 days**. When they expire:
 
 ```bash
-# Add to crontab
-crontab -e
+# Regenerate certificates
+./scripts/generate-self-signed-cert.sh  # or .ps1 for Windows
 
-# Add this line to renew certificates twice daily
-0 0,12 * * * cd /path/to/supreme-tuning && docker compose run --rm certbot renew && docker compose restart nginx
-```
-
-### Option B: Manual Renewal
-
-```bash
-# Renew certificates manually when needed
-docker compose run --rm certbot renew
+# Restart nginx
 docker compose restart nginx
 ```
 
@@ -150,42 +140,51 @@ docker compose restart nginx
 
 ### Issue: "Certificate not found" error
 
-**Solution:** Make sure you've obtained certificates first:
+**Solution:** Generate the self-signed certificates first:
 ```bash
-docker compose run --rm certbot
+./scripts/generate-self-signed-cert.sh  # Linux/Mac
+.\scripts\generate-self-signed-cert.ps1  # Windows
 ```
 
-### Issue: Certbot validation fails
+### Issue: OpenSSL not found
 
-**Possible causes:**
-1. DNS not configured correctly
-2. Port 80 blocked by firewall
-3. Domain doesn't point to your server
+**Solutions:**
+- **Windows:** Install Git for Windows (includes OpenSSL) from https://git-scm.com/download/win
+- **Linux:** `sudo apt-get install openssl` or `sudo yum install openssl`
+- **Mac:** OpenSSL is pre-installed
+- **Alternative:** Use the Docker method shown in Step 1
 
-**Check:**
-```bash
-# Verify port 80 is accessible
-curl http://supremetuning.nl/.well-known/acme-challenge/test
+### Issue: Browser shows "Your connection is not private"
 
-# Check nginx logs
-docker compose logs nginx
+**This is normal for self-signed certificates!**
 
-# Check certbot logs
-docker compose logs certbot
-```
+Self-signed certificates are not trusted by browsers by default. You can:
+1. Click "Advanced" and proceed anyway (safe for local development)
+2. Add the certificate to your browser's trusted certificates (optional)
 
 ### Issue: "Connection refused" on HTTPS
 
-**Solution:** Ensure nginx is running and port 443 is open:
+**Solution:** Ensure nginx is running and certificates exist:
 ```bash
 # Check if nginx is running
 docker compose ps nginx
+
+# Check if certificates exist
+ls -la ssl/
 
 # Check nginx configuration
 docker compose exec nginx nginx -t
 
 # View nginx logs
 docker compose logs nginx
+```
+
+### Issue: Permission denied on ssl files
+
+**Solution:** Fix file permissions:
+```bash
+chmod 644 ssl/cert.pem
+chmod 600 ssl/key.pem
 ```
 
 ---
@@ -202,24 +201,30 @@ docker compose logs -f nginx
 # Restart all services
 docker compose restart
 
-# Check certificate expiration
-docker compose run --rm certbot certificates
+# Check certificate details
+openssl x509 -in ssl/cert.pem -text -noout
 
-# Force certificate renewal (for testing)
-docker compose run --rm certbot renew --force-renewal
+# Check certificate expiration date
+openssl x509 -in ssl/cert.pem -noout -dates
+
+# Regenerate certificates
+./scripts/generate-self-signed-cert.sh  # Linux/Mac
+.\scripts\generate-self-signed-cert.ps1  # Windows
 ```
 
 ---
 
-## 🔐 Security Best Practices
+## 🔐 Security Features
 
 The nginx configuration includes:
 
 ✅ **TLS 1.2 and 1.3** - Modern encryption protocols
 ✅ **Strong ciphers** - Secure cipher suites
-✅ **HSTS header** - Forces HTTPS for 1 year
 ✅ **Security headers** - XSS, clickjacking protection
 ✅ **HTTP/2** - Faster page loads
+✅ **Automatic HTTP→HTTPS redirect**
+
+**Note:** HSTS is disabled for self-signed certificates to avoid browser issues.
 
 ---
 
@@ -227,10 +232,20 @@ The nginx configuration includes:
 
 After SSL is working:
 
-1. ✅ Update your `SITE_URL` in environment variables to use `https://`
-2. ✅ Set up automatic certificate renewal
-3. ✅ Test your SSL configuration at: https://www.ssllabs.com/ssltest/
-4. ✅ Update any hardcoded HTTP URLs in your application to HTTPS
+1. ✅ Accept the browser security warning (normal for self-signed certs)
+2. ✅ Update your `SITE_URL` in environment variables to use `https://`
+3. ✅ Bookmark the HTTPS URL for easy access
+4. ✅ For production: Get a real domain and use Let's Encrypt instead
+
+---
+
+## 🌐 Using with a Real Domain (Production)
+
+If you later get a domain name, you can switch to Let's Encrypt:
+
+1. Update `nginx.conf` to use your domain name
+2. Use Let's Encrypt instead of self-signed certificates
+3. See the Let's Encrypt documentation for details
 
 ---
 
@@ -239,7 +254,7 @@ After SSL is working:
 If you encounter issues:
 
 1. Check the logs: `docker compose logs -f`
-2. Verify DNS: `nslookup supremetuning.nl`
-3. Test ports: `curl -I http://supremetuning.nl`
-4. Review nginx config: `docker compose exec nginx nginx -t`
+2. Verify certificates exist: `ls -la ssl/`
+3. Test nginx config: `docker compose exec nginx nginx -t`
+4. Check certificate details: `openssl x509 -in ssl/cert.pem -text -noout`
 

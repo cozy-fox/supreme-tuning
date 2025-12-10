@@ -5,6 +5,9 @@ FROM node:20.12.2-alpine AS base
 FROM base AS deps
 WORKDIR /app
 
+# Install Sharp dependencies for Alpine Linux
+RUN apk add --no-cache libc6-compat
+
 # Copy package files
 COPY package.json package-lock.json* ./
 
@@ -29,6 +32,9 @@ RUN npm run build
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
+
+# Install Sharp dependencies for Alpine Linux
+RUN apk add --no-cache libc6-compat
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

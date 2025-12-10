@@ -14,8 +14,9 @@ const nextConfig = {
         hostname: '**',
       },
     ],
-    // Allow unoptimized images for local brand logos
+    // Use Sharp for image optimization (required in production)
     unoptimized: false,
+    formats: ['image/avif', 'image/webp'],
   },
 
   // SEO: Trailing slashes for cleaner URLs

@@ -1,5 +1,5 @@
 # Multi-stage build for Next.js application
-FROM node:20.12.2-alpine AS base
+FROM node:20.19.0-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -50,8 +50,9 @@ RUN mkdir -p .next
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 
-# Ensure data directory and backups subdirectory exist
-RUN mkdir -p /app/data/backups
+# Ensure data directory exists for admin credentials file
+# Note: Database is now in MongoDB Atlas, but we still need data/admin.json for authentication
+RUN mkdir -p /app/data
 
 EXPOSE 3000
 

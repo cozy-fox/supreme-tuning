@@ -19,6 +19,8 @@ jobs:
           NODE_ENV=production
           SITE_URL=${{ secrets.SITE_URL }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
+          MONGODB_URI=${{ secrets.MONGODB_URI }}
+          MONGODB_DB=supremetuning
           EOF
 
       - name: Stop existing containers
@@ -27,7 +29,7 @@ jobs:
 
       - name: Ensure data directory permissions
         run: |
-          mkdir -p ./data/backups
+          mkdir -p ./data
           chmod -R 777 ./data
 
       - name: Generate SSL certificates if not exists

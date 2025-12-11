@@ -1,5 +1,4 @@
 import { getBrands } from '@/lib/data';
-import Header from '@/components/Header';
 import BrandCard from '@/components/BrandCard';
 import HeroSection from '@/components/HeroSection';
 
@@ -16,19 +15,16 @@ export default async function HomePage() {
   const brands = await getBrands();
 
   return (
-    <>
-      <Header />
-      <main className="container">
-        <HeroSection />
+    <main className="container">
+      <HeroSection />
 
-        {/* Brand Grid */}
-        <div className="grid-brands">
-          {brands.map((brand) => (
-            <BrandCard key={brand.id} brand={brand} />
-          ))}
-        </div>
-      </main>
-    </>
+      {/* Brand Grid */}
+      <div className="grid-brands">
+        {brands.map((brand) => (
+          <BrandCard key={brand.id} brand={brand} />
+        ))}
+      </div>
+    </main>
   );
 }
 

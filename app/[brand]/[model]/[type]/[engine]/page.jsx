@@ -1,7 +1,6 @@
 import { getBrands, getModels, getTypes, getEngines, getStages, getEngineById } from '@/lib/data';
 import { generateMetadata as generateSeoMetadata, generateVehicleSchema, generateBreadcrumbSchema } from '@/lib/seo';
 import { notFound } from 'next/navigation';
-import Header from '@/components/Header';
 import ResultsClient from './ResultsClient';
 
 // Dynamic metadata for SEO - this is crucial for search engines
@@ -74,9 +73,8 @@ export default async function ResultsPage({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      
+
       <div className="results-page">
-        <Header />
         <main className="container">
           {/* Breadcrumb Navigation */}
           <nav className="breadcrumb">
@@ -90,7 +88,7 @@ export default async function ResultsPage({ params }) {
           </nav>
 
           {/* Client-side interactive results */}
-          <ResultsClient 
+          <ResultsClient
             stages={stages}
             vehicleInfo={vehicleInfo}
             engineData={engineData}

@@ -1,38 +1,28 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { ChevronRight, Phone, ShoppingBag, Check, AlertCircle, Zap, Unlock, Edit3, X, Save } from 'lucide-react';
+import { useState } from 'react';
+import { ChevronRight, ChevronLeft, Phone, ShoppingBag, Check, AlertCircle, Zap, Unlock, Edit3, X, Save } from 'lucide-react';
 import { useLanguage } from '@/components/LanguageContext';
 import { useAuth } from '@/components/AuthContext';
 
 export default function ResultsClient({ stages: initialStages, vehicleInfo, engineData }) {
-  const [activeTab, setActiveTab] = useState(1);
+  const [selectedStageIndex, setSelectedStageIndex] = useState(0);
   const [stages, setStages] = useState(initialStages);
   const { t } = useLanguage();
   const { isAdmin, fetchAPI } = useAuth();
 
-  // Group stages by category
-  const groupedStages = useMemo(() => {
-    const stage1Group = stages.filter(s =>
-      s.stageName?.toLowerCase().includes('stage 1') ||
-      s.stageName?.toLowerCase().includes('stage1')
-    );
-    const stage2Group = stages.filter(s =>
-      s.stageName?.toLowerCase().includes('stage 2') ||
-      s.stageName?.toLowerCase().includes('stage2')
-    );
+  // Navigation handlers
+  const handlePrevStage = () => {
+    setSelectedStageIndex(prev => Math.max(0, prev - 1));
+  };
 
-    if (stage1Group.length === 0 && stage2Group.length === 0) {
-      return {
-        stage1: stages.slice(0, Math.ceil(stages.length / 2)),
-        stage2: stages.slice(Math.ceil(stages.length / 2))
-      };
-    }
+  const handleNextStage = () => {
+    setSelectedStageIndex(prev => Math.min(stages.length - 1, prev + 1));
+  };
 
-    return { stage1: stage1Group, stage2: stage2Group };
-  }, [stages]);
-
-  const currentStages = activeTab === 1 ? groupedStages.stage1 : groupedStages.stage2;
+  const handleStageSelect = (index) => {
+    setSelectedStageIndex(index);
+  };
 
   if (stages.length === 0) {
     return (
@@ -47,50 +37,66 @@ export default function ResultsClient({ stages: initialStages, vehicleInfo, engi
   }
 
   return (
-    <>
-      {/* Stage Tabs */}
-      <div className="stage-tabs">
-        <button
-          className={`stage-tab ${activeTab === 1 ? 'active' : ''}`}
-          onClick={() => setActiveTab(1)}
-        >
-          Stage 1
-        </button>
-        <button
-          className={`stage-tab ${activeTab === 2 ? 'active' : ''}`}
-          onClick={() => setActiveTab(2)}
-        >
-          Stage 2
-        </button>
-      </div>
+    <div className="results-container">
+      {/* Stage Selector - Mobile First Design */}
+      {stages.length > 1 && (
+        <div className="stage-selector-wrapper">
+          {/* Dropdown Selector */}
+          <div className="stage-dropdown-container">
+            <select
+              value={selectedStageIndex}
+              onChange={(e) => handleStageSelect(parseInt(e.target.value))}
+              className="stage-dropdown"
+            >
+              {stages.map((stage, index) => (
+                <option key={stage.id || index} value={index}>
+                  {stage.stageName || `Option ${index + 1}`}
+                </option>
+              ))}
+            </select>
+            <div className="stage-counter">
+              {selectedStageIndex + 1} / {stages.length}
+            </div>
+          </div>
 
-      {/* Stage Sections */}
-      {currentStages.map((stage, index) => (
-        <StageSection
-          key={stage.id || index}
-          stage={stage}
-          stageIndex={stages.indexOf(stage)}
-          vehicleInfo={vehicleInfo}
-          isStage2={activeTab === 2}
-          isAdmin={isAdmin}
-          fetchAPI={fetchAPI}
-          onStageUpdate={(updatedStage) => {
-            const newStages = [...stages];
-            const idx = stages.indexOf(stage);
-            newStages[idx] = updatedStage;
-            setStages(newStages);
-          }}
-        />
-      ))}
-
-      {currentStages.length === 0 && (
-        <div className="card" style={{ textAlign: 'center', padding: '40px' }}>
-          <p style={{ color: '#8a8a8a' }}>
-            {t('noStageOptions').replace('{stage}', activeTab)}
-          </p>
+          {/* Navigation Arrows */}
+          <div className="stage-nav-arrows">
+            <button
+              onClick={handlePrevStage}
+              disabled={selectedStageIndex === 0}
+              className="stage-arrow-btn"
+              aria-label="Previous stage"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={handleNextStage}
+              disabled={selectedStageIndex === stages.length - 1}
+              className="stage-arrow-btn"
+              aria-label="Next stage"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
         </div>
       )}
-    </>
+
+      {/* Show only the selected stage */}
+      <StageSection
+        key={stages[selectedStageIndex]?.id || selectedStageIndex}
+        stage={stages[selectedStageIndex]}
+        stageIndex={selectedStageIndex}
+        vehicleInfo={vehicleInfo}
+        isStage2={stages[selectedStageIndex]?.stageName?.toLowerCase().includes('stage 2')}
+        isAdmin={isAdmin}
+        fetchAPI={fetchAPI}
+        onStageUpdate={(updatedStage) => {
+          const newStages = [...stages];
+          newStages[selectedStageIndex] = updatedStage;
+          setStages(newStages);
+        }}
+      />
+    </div>
   );
 }
 

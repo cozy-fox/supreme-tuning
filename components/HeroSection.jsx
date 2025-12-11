@@ -8,11 +8,11 @@ export default function HeroSection() {
 
   return (
     <div className="hero-section">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '16px' }}>
-        <Zap size={32} color="var(--primary)" />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '20px' }}>
+        <Zap size={40} color="var(--primary)" />
         <h1>{t('chiptuningCalculator')}</h1>
       </div>
-      <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
+      <p style={{ color: 'var(--text-muted)', maxWidth: '800px', margin: '0 auto' }}>
         {t('selectBrand')}
       </p>
     </div>

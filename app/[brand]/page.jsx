@@ -1,7 +1,6 @@
 import { getBrands, getModels, getBrandByName } from '@/lib/data';
 import { generateMetadata as generateSeoMetadata } from '@/lib/seo';
 import { notFound } from 'next/navigation';
-import Header from '@/components/Header';
 import BrandSelector from './BrandSelector';
 
 // Generate static params for all brands (SSG)
@@ -43,31 +42,28 @@ export default async function BrandPage({ params }) {
   const models = await getModels(brand.id);
 
   return (
-    <>
-      <Header />
-      <main className="container">
-        {/* Breadcrumb */}
-        <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
-          <a href="/">Home</a>
-          <span>›</span>
-          <span className="current">{brand.name}</span>
-        </nav>
+    <main className="container">
+      {/* Breadcrumb */}
+      <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
+        <a href="/">Home</a>
+        <span>›</span>
+        <span className="current">{brand.name}</span>
+      </nav>
 
-        {/* Hero */}
-        <div className="hero-section" style={{ padding: '20px 0 15px' }}>
-          <h1>{brand.name} Chiptuning</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
-            Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken
-          </p>
-        </div>
+      {/* Hero */}
+      <div className="hero-section" style={{ padding: '20px 0 15px' }}>
+        <h1>{brand.name} Chiptuning</h1>
+        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
+          Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken
+        </p>
+      </div>
 
-        {/* Client-side selector component */}
-        <BrandSelector
-          brand={brand}
-          models={models}
-        />
-      </main>
-    </>
+      {/* Client-side selector component */}
+      <BrandSelector
+        brand={brand}
+        models={models}
+      />
+    </main>
   );
 }
 

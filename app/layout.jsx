@@ -1,6 +1,8 @@
 import './globals.css';
 import { AuthProvider } from '@/components/AuthContext';
 import { LanguageProvider } from '@/components/LanguageContext';
+import IframeHeightSync from '@/components/IframeHeightSync';
+import LanguageSelector from '@/components/LanguageSelector';
 
 export const metadata = {
   title: {
@@ -65,6 +67,8 @@ export default function RootLayout({ children }) {
       <body className="notranslate" translate="no">
         <LanguageProvider>
           <AuthProvider>
+            <IframeHeightSync />
+            <LanguageSelector />
             <div id="root">
               {children}
             </div>

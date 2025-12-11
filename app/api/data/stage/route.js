@@ -13,7 +13,7 @@ export async function PUT(request) {
 
   try {
     const { brand, model, type, engine, stageIndex, stageData } = await request.json();
-    
+
     if (!brand || !model || !type || !engine || stageIndex === undefined || !stageData) {
       return NextResponse.json(
         { message: 'Missing required fields' },
@@ -22,84 +22,110 @@ export async function PUT(request) {
     }
 
     const data = await getData();
-    
+
+    // MongoDB uses flat structure - find entities by name/slug
     // Find the brand
-    const brandData = data.brands?.find(b => 
+    const brandData = data.brands?.find(b =>
       b.name?.toLowerCase() === brand.toLowerCase() ||
       b.slug?.toLowerCase() === brand.toLowerCase()
     );
-    
+
     if (!brandData) {
       return NextResponse.json(
-        { message: 'Brand not found' },
+        { message: `Brand not found: ${brand}` },
         { status: 404 }
       );
     }
 
-    // Find the model
-    const modelData = brandData.models?.find(m => 
-      m.name?.toLowerCase() === model.toLowerCase() ||
-      m.slug?.toLowerCase() === model.toLowerCase()
+    // Find the model (in flat models array, filtered by brandId)
+    const modelData = data.models?.find(m =>
+      m.brandId === brandData.id && (
+        m.name?.toLowerCase() === model.toLowerCase() ||
+        m.slug?.toLowerCase() === model.toLowerCase()
+      )
     );
-    
+
     if (!modelData) {
       return NextResponse.json(
-        { message: 'Model not found' },
+        { message: `Model not found: ${model} for brand ${brand}` },
         { status: 404 }
       );
     }
 
-    // Find the type/generation
-    const typeData = modelData.types?.find(t => 
-      t.name?.toLowerCase() === type.toLowerCase() ||
-      t.slug?.toLowerCase() === type.toLowerCase()
+    // Find the type/generation (in flat types array, filtered by modelId)
+    const typeData = data.types?.find(t =>
+      t.modelId === modelData.id && (
+        t.name?.toLowerCase() === type.toLowerCase() ||
+        t.slug?.toLowerCase() === type.toLowerCase()
+      )
     );
-    
+
     if (!typeData) {
       return NextResponse.json(
-        { message: 'Type not found' },
+        { message: `Type/Generation not found: ${type} for model ${model}` },
         { status: 404 }
       );
     }
 
-    // Find the engine
-    const engineData = typeData.engines?.find(e => 
-      e.name?.toLowerCase() === engine.toLowerCase() ||
-      e.slug?.toLowerCase() === engine.toLowerCase()
+    // Find the engine (in flat engines array, filtered by typeId)
+    const engineData = data.engines?.find(e =>
+      e.typeId === typeData.id && (
+        e.name?.toLowerCase() === engine.toLowerCase() ||
+        e.slug?.toLowerCase() === engine.toLowerCase() ||
+        e.id?.toString() === engine.toString()
+      )
     );
-    
+
     if (!engineData) {
       return NextResponse.json(
-        { message: 'Engine not found' },
+        { message: `Engine not found: ${engine} for type ${type}` },
         { status: 404 }
       );
     }
 
-    // Update the stage
-    if (!engineData.stages || !engineData.stages[stageIndex]) {
+    // Find the stages for this engine (in flat stages array, filtered by engineId)
+    const engineStages = data.stages?.filter(s => s.engineId === engineData.id) || [];
+
+    if (!engineStages || engineStages.length === 0) {
       return NextResponse.json(
-        { message: 'Stage not found' },
+        { message: 'No stages found for this engine' },
         { status: 404 }
       );
     }
+
+    if (stageIndex < 0 || stageIndex >= engineStages.length) {
+      return NextResponse.json(
+        { message: `Stage index ${stageIndex} out of range (0-${engineStages.length - 1})` },
+        { status: 404 }
+      );
+    }
+
+    // Get the specific stage to update
+    const stageToUpdate = engineStages[stageIndex];
 
     // Update only the allowed fields
     const allowedFields = ['stageName', 'stockHp', 'tunedHp', 'stockNm', 'tunedNm', 'price'];
     allowedFields.forEach(field => {
       if (stageData[field] !== undefined) {
-        engineData.stages[stageIndex][field] = stageData[field];
+        stageToUpdate[field] = stageData[field];
       }
     });
 
-    // Save the updated data
+    // Update the stage in the data.stages array
+    const stageArrayIndex = data.stages.findIndex(s => s.id === stageToUpdate.id);
+    if (stageArrayIndex !== -1) {
+      data.stages[stageArrayIndex] = stageToUpdate;
+    }
+
+    // Save the updated data back to MongoDB
     await saveData(data);
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Stage updated successfully',
-      stage: engineData.stages[stageIndex]
+      stage: stageToUpdate
     });
   } catch (error) {
-    console.error('Stage update error:', error);
+    console.error('❌ Stage update error:', error);
     return NextResponse.json(
       { message: 'Update failed', error: error.message },
       { status: 500 }

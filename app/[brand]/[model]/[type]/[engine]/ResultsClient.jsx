@@ -358,7 +358,7 @@ function StageSection({ stage, stageIndex, vehicleInfo, isStage2, isAdmin, fetch
           <div className="power-stat">
             <div className="stat-header">
               <h4>{t('power')}</h4>
-              <span className="gain-badge">+{hpGain} PK</span>
+              <span className="gain-badge">+{hpGain} {t('hp')}</span>
             </div>
 
             {/* Stock Bar */}
@@ -366,7 +366,7 @@ function StageSection({ stage, stageIndex, vehicleInfo, isStage2, isAdmin, fetch
               <span className="bar-label stock-label">{t('stock')}</span>
               <div className="bar-track">
                 <div className="bar-fill bar-stock" style={{ width: `${(stockHp / maxPower) * 100}%` }}>
-                  <span className="bar-value">{stockHp} PK</span>
+                  <span className="bar-value">{stockHp} {t('hp')}</span>
                 </div>
               </div>
             </div>
@@ -376,7 +376,7 @@ function StageSection({ stage, stageIndex, vehicleInfo, isStage2, isAdmin, fetch
               <span className="bar-label tuned-label">{t('tuned')}</span>
               <div className="bar-track">
                 <div className="bar-fill bar-tuned" style={{ width: `${(tunedHp / maxPower) * 100}%` }}>
-                  <span className="bar-value">{tunedHp} PK</span>
+                  <span className="bar-value">{tunedHp} {t('hp')}</span>
                 </div>
               </div>
             </div>

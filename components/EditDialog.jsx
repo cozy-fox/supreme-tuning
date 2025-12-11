@@ -39,7 +39,7 @@ export default function EditDialog({ show, title, value, onConfirm, onCancel, pl
     >
       <div
         style={{
-          background: 'var(--card-bg)',
+          background: 'rgba(0,0,0,1)',
           borderRadius: '16px',
           padding: '32px',
           maxWidth: '500px',

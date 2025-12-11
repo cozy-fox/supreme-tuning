@@ -25,12 +25,12 @@ export default function ConfirmDialog({ show, message, onConfirm, onCancel, conf
     >
       <div
         style={{
-          background: 'var(--card-bg)',
+          background: 'rgba(0,0,0,1)',
           borderRadius: '16px',
           padding: '32px',
           maxWidth: '500px',
           width: '100%',
-          boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+          boxShadow: '0 20px 60px rgba(0, 0, 0, 1)',
           animation: 'scaleIn 0.2s ease-out'
         }}
         onClick={(e) => e.stopPropagation()}

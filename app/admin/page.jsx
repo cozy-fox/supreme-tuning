@@ -25,13 +25,20 @@ export default function AdminPage() {
   const [dataMessage, setDataMessage] = useState({ type: '', text: '' });
   const [showDataEditor, setShowDataEditor] = useState(false);
 
-  // Visual editor state
+  // Visual editor state - lazy loading approach
   const [showVisualEditor, setShowVisualEditor] = useState(false);
-  const [visualData, setVisualData] = useState(null);
+  const [brands, setBrands] = useState([]);
+  const [models, setModels] = useState([]);
+  const [types, setTypes] = useState([]);
+  const [engines, setEngines] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
   const [selectedEngine, setSelectedEngine] = useState(null);
+  const [brandsLoading, setBrandsLoading] = useState(false);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [typesLoading, setTypesLoading] = useState(false);
+  const [enginesLoading, setEnginesLoading] = useState(false);
 
   // Toast notification state
   const [toast, setToast] = useState({ show: false, message: '', type: '' });
@@ -144,24 +151,105 @@ export default function AdminPage() {
     setCredsSaving(false);
   };
 
-  // Load visual editor data
-  const loadVisualData = async () => {
-    setDataLoading(true);
+  // Load brands (called on mount when visual editor is opened)
+  const loadBrands = async () => {
+    setBrandsLoading(true);
     try {
-      const data = await fetchAPI('data', { isProtected: true });
-      console.log('📊 Loaded data:', {
-        brands: data.brands?.length,
-        models: data.models?.length,
-        types: data.types?.length,
-        sampleBrand: data.brands?.[0],
-        sampleModel: data.models?.[0]
-      });
-      setVisualData(data);
-      setDataMessage({ type: 'success', text: 'Data loaded successfully' });
+      const data = await fetchAPI('brands', { isProtected: true });
+      console.log('📊 Loaded brands:', data.length);
+      setBrands(data);
+      setDataMessage({ type: 'success', text: `Loaded ${data.length} brands` });
     } catch (error) {
-      setDataMessage({ type: 'error', text: 'Failed to load: ' + error.message });
+      setDataMessage({ type: 'error', text: 'Failed to load brands: ' + error.message });
     }
-    setDataLoading(false);
+    setBrandsLoading(false);
+  };
+
+  // Load models for selected brand
+  const loadModels = async (brandId) => {
+    setModelsLoading(true);
+    setModels([]);
+    setTypes([]);
+    setEngines([]);
+    setSelectedModel(null);
+    setSelectedType(null);
+    setSelectedEngine(null);
+    try {
+      const data = await fetchAPI(`models?brandId=${brandId}`, { isProtected: true });
+      console.log('📊 Loaded models for brand:', brandId, data.length);
+      setModels(data);
+    } catch (error) {
+      setDataMessage({ type: 'error', text: 'Failed to load models: ' + error.message });
+    }
+    setModelsLoading(false);
+  };
+
+  // Load types for selected model
+  const loadTypes = async (modelId) => {
+    setTypesLoading(true);
+    setTypes([]);
+    setEngines([]);
+    setSelectedType(null);
+    setSelectedEngine(null);
+    try {
+      const data = await fetchAPI(`types?modelId=${modelId}`, { isProtected: true });
+      console.log('📊 Loaded types for model:', modelId, data.length);
+      setTypes(data);
+    } catch (error) {
+      setDataMessage({ type: 'error', text: 'Failed to load types: ' + error.message });
+    }
+    setTypesLoading(false);
+  };
+
+  // Load engines for selected type
+  const loadEngines = async (typeId) => {
+    setEnginesLoading(true);
+    setEngines([]);
+    setSelectedEngine(null);
+    try {
+      const data = await fetchAPI(`engines?typeId=${typeId}`, { isProtected: true });
+      console.log('📊 Loaded engines for type:', typeId, data.length);
+      setEngines(data);
+    } catch (error) {
+      setDataMessage({ type: 'error', text: 'Failed to load engines: ' + error.message });
+    }
+    setEnginesLoading(false);
+  };
+
+  // Load brands when visual editor is opened
+  useEffect(() => {
+    if (showVisualEditor && brands.length === 0) {
+      loadBrands();
+    }
+  }, [showVisualEditor]);
+
+  // Handle brand selection
+  const handleBrandSelect = (brand) => {
+    setSelectedBrand(brand);
+    setSelectedModel(null);
+    setSelectedType(null);
+    setSelectedEngine(null);
+    loadModels(brand.id);
+  };
+
+  // Handle model selection
+  const handleModelSelect = (model) => {
+    setSelectedModel(model);
+    setSelectedType(null);
+    setSelectedEngine(null);
+    loadTypes(model.id);
+  };
+
+  // Handle type selection
+  const handleTypeSelect = (type) => {
+    setSelectedType(type);
+    setSelectedEngine(null);
+    loadEngines(type.id);
+  };
+
+  // Handle engine selection
+  const handleEngineSelect = (engine) => {
+    setSelectedEngine(engine);
   };
 
   // Load backup history
@@ -208,9 +296,17 @@ export default function AdminPage() {
         body: JSON.stringify({ backupId }),
       });
       setBackupMessage({ type: 'success', text: 'Database restored successfully!' });
-      // Reload data if visual editor is open
-      if (visualData) {
-        await loadVisualData();
+      // Reload brands if visual editor is open
+      if (showVisualEditor) {
+        await loadBrands();
+        // Reset selections
+        setSelectedBrand(null);
+        setSelectedModel(null);
+        setSelectedType(null);
+        setSelectedEngine(null);
+        setModels([]);
+        setTypes([]);
+        setEngines([]);
       }
     } catch (error) {
       setBackupMessage({ type: 'error', text: 'Failed to restore: ' + error.message });
@@ -275,32 +371,22 @@ export default function AdminPage() {
   };
 
   const performDeleteBrand = async (brandId) => {
-
-    const newData = { ...visualData };
-
-    // Get all related IDs for cascade delete
-    const modelIds = newData.models.filter(m => m.brandId === brandId).map(m => m.id);
-    const typeIds = newData.types.filter(t => t.brandId === brandId).map(t => t.id);
-    const engineIds = newData.engines.filter(e => typeIds.includes(e.typeId)).map(e => e.id);
-
-    // Cascade delete in reverse order
-    newData.stages = newData.stages.filter(s => !engineIds.includes(s.engineId));
-    newData.engines = newData.engines.filter(e => !typeIds.includes(e.typeId));
-    newData.types = newData.types.filter(t => t.brandId !== brandId);
-    newData.models = newData.models.filter(m => m.brandId !== brandId);
-    newData.brands = newData.brands.filter(b => b.id !== brandId);
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI(`admin/brand?id=${brandId}`, {
+        method: 'DELETE',
         isProtected: true,
-        body: JSON.stringify(newData),
       });
-      setVisualData(newData);
+
+      // Remove from local state
+      setBrands(brands.filter(b => b.id !== brandId));
       setSelectedBrand(null);
       setSelectedModel(null);
       setSelectedType(null);
       setSelectedEngine(null);
+      setModels([]);
+      setTypes([]);
+      setEngines([]);
+
       setDataMessage({ type: 'success', text: 'Brand and all related data deleted successfully' });
       showToast('Brand deleted successfully', 'success');
     } catch (error) {
@@ -319,29 +405,20 @@ export default function AdminPage() {
   };
 
   const performDeleteModel = async (modelId) => {
-
-    const newData = { ...visualData };
-
-    // Get all related IDs for cascade delete
-    const typeIds = newData.types.filter(t => t.modelId === modelId).map(t => t.id);
-    const engineIds = newData.engines.filter(e => typeIds.includes(e.typeId)).map(e => e.id);
-
-    // Cascade delete in reverse order
-    newData.stages = newData.stages.filter(s => !engineIds.includes(s.engineId));
-    newData.engines = newData.engines.filter(e => !typeIds.includes(e.typeId));
-    newData.types = newData.types.filter(t => t.modelId !== modelId);
-    newData.models = newData.models.filter(m => m.id !== modelId);
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI(`admin/model?id=${modelId}`, {
+        method: 'DELETE',
         isProtected: true,
-        body: JSON.stringify(newData),
       });
-      setVisualData(newData);
+
+      // Remove from local state
+      setModels(models.filter(m => m.id !== modelId));
       setSelectedModel(null);
       setSelectedType(null);
       setSelectedEngine(null);
+      setTypes([]);
+      setEngines([]);
+
       setDataMessage({ type: 'success', text: 'Model and all related data deleted successfully' });
       showToast('Model deleted successfully', 'success');
     } catch (error) {
@@ -359,26 +436,18 @@ export default function AdminPage() {
   };
 
   const performDeleteType = async (typeId) => {
-
-    const newData = { ...visualData };
-
-    // Get all related IDs for cascade delete
-    const engineIds = newData.engines.filter(e => e.typeId === typeId).map(e => e.id);
-
-    // Cascade delete in reverse order
-    newData.stages = newData.stages.filter(s => !engineIds.includes(s.engineId));
-    newData.engines = newData.engines.filter(e => e.typeId !== typeId);
-    newData.types = newData.types.filter(t => t.id !== typeId);
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI(`admin/type?id=${typeId}`, {
+        method: 'DELETE',
         isProtected: true,
-        body: JSON.stringify(newData),
       });
-      setVisualData(newData);
+
+      // Remove from local state
+      setTypes(types.filter(t => t.id !== typeId));
       setSelectedType(null);
       setSelectedEngine(null);
+      setEngines([]);
+
       setDataMessage({ type: 'success', text: 'Generation and all related data deleted successfully' });
       showToast('Generation deleted successfully', 'success');
     } catch (error) {
@@ -396,21 +465,16 @@ export default function AdminPage() {
   };
 
   const performDeleteEngine = async (engineId) => {
-
-    const newData = { ...visualData };
-
-    // Cascade delete in reverse order
-    newData.stages = newData.stages.filter(s => s.engineId !== engineId);
-    newData.engines = newData.engines.filter(e => e.id !== engineId);
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI(`admin/engine?id=${engineId}`, {
+        method: 'DELETE',
         isProtected: true,
-        body: JSON.stringify(newData),
       });
-      setVisualData(newData);
+
+      // Remove from local state
+      setEngines(engines.filter(e => e.id !== engineId));
       setSelectedEngine(null);
+
       setDataMessage({ type: 'success', text: 'Engine and all stages deleted successfully' });
       showToast('Engine deleted successfully', 'success');
     } catch (error) {
@@ -431,20 +495,25 @@ export default function AdminPage() {
   const performRenameBrand = async (brandId, newName) => {
     if (!newName || newName.trim() === '') return;
 
-    const newData = { ...visualData };
-    const brand = newData.brands.find(b => b.id === brandId);
-    if (!brand) return;
-
-    brand.name = newName.trim();
-    brand.slug = newName.toLowerCase().replace(/\s+/g, '-');
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI('admin/brand', {
+        method: 'PUT',
         isProtected: true,
-        body: JSON.stringify(newData),
+        body: JSON.stringify({ id: brandId, name: newName.trim() }),
       });
-      setVisualData(newData);
+
+      // Update local state
+      setBrands(brands.map(b =>
+        b.id === brandId
+          ? { ...b, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') }
+          : b
+      ));
+
+      // Update selected brand if it's the one being renamed
+      if (selectedBrand?.id === brandId) {
+        setSelectedBrand({ ...selectedBrand, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') });
+      }
+
       setDataMessage({ type: 'success', text: 'Brand renamed successfully' });
       showToast('Brand renamed successfully', 'success');
     } catch (error) {
@@ -465,20 +534,25 @@ export default function AdminPage() {
   const performRenameModel = async (modelId, newName) => {
     if (!newName || newName.trim() === '') return;
 
-    const newData = { ...visualData };
-    const model = newData.models.find(m => m.id === modelId);
-    if (!model) return;
-
-    model.name = newName.trim();
-    model.slug = newName.toLowerCase().replace(/\s+/g, '-');
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI('admin/model', {
+        method: 'PUT',
         isProtected: true,
-        body: JSON.stringify(newData),
+        body: JSON.stringify({ id: modelId, name: newName.trim() }),
       });
-      setVisualData(newData);
+
+      // Update local state
+      setModels(models.map(m =>
+        m.id === modelId
+          ? { ...m, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') }
+          : m
+      ));
+
+      // Update selected model if it's the one being renamed
+      if (selectedModel?.id === modelId) {
+        setSelectedModel({ ...selectedModel, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') });
+      }
+
       setDataMessage({ type: 'success', text: 'Model renamed successfully' });
       showToast('Model renamed successfully', 'success');
     } catch (error) {
@@ -499,20 +573,25 @@ export default function AdminPage() {
   const performRenameType = async (typeId, newName) => {
     if (!newName || newName.trim() === '') return;
 
-    const newData = { ...visualData };
-    const type = newData.types.find(t => t.id === typeId);
-    if (!type) return;
-
-    type.name = newName.trim();
-    type.slug = newName.toLowerCase().replace(/\s+/g, '-');
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI('admin/type', {
+        method: 'PUT',
         isProtected: true,
-        body: JSON.stringify(newData),
+        body: JSON.stringify({ id: typeId, name: newName.trim() }),
       });
-      setVisualData(newData);
+
+      // Update local state
+      setTypes(types.map(t =>
+        t.id === typeId
+          ? { ...t, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') }
+          : t
+      ));
+
+      // Update selected type if it's the one being renamed
+      if (selectedType?.id === typeId) {
+        setSelectedType({ ...selectedType, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') });
+      }
+
       setDataMessage({ type: 'success', text: 'Generation renamed successfully' });
       showToast('Generation renamed successfully', 'success');
     } catch (error) {
@@ -533,20 +612,25 @@ export default function AdminPage() {
   const performRenameEngine = async (engineId, newName) => {
     if (!newName || newName.trim() === '') return;
 
-    const newData = { ...visualData };
-    const engine = newData.engines.find(e => e.id === engineId);
-    if (!engine) return;
-
-    engine.name = newName.trim();
-    engine.slug = newName.toLowerCase().replace(/\s+/g, '-');
-
     try {
-      await fetchAPI('data', {
-        method: 'POST',
+      await fetchAPI('admin/engine', {
+        method: 'PUT',
         isProtected: true,
-        body: JSON.stringify(newData),
+        body: JSON.stringify({ id: engineId, name: newName.trim() }),
       });
-      setVisualData(newData);
+
+      // Update local state
+      setEngines(engines.map(e =>
+        e.id === engineId
+          ? { ...e, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') }
+          : e
+      ));
+
+      // Update selected engine if it's the one being renamed
+      if (selectedEngine?.id === engineId) {
+        setSelectedEngine({ ...selectedEngine, name: newName.trim(), slug: newName.toLowerCase().replace(/\s+/g, '-') });
+      }
+
       setDataMessage({ type: 'success', text: 'Engine renamed successfully' });
       showToast('Engine renamed successfully', 'success');
     } catch (error) {
@@ -607,13 +691,17 @@ export default function AdminPage() {
 
         {/* Visual Editor Section */}
         <VisualEditorSection
-          t={t}
           showVisualEditor={showVisualEditor}
           setShowVisualEditor={setShowVisualEditor}
-          visualData={visualData}
-          dataLoading={dataLoading}
+          brands={brands}
+          models={models}
+          types={types}
+          engines={engines}
+          brandsLoading={brandsLoading}
+          modelsLoading={modelsLoading}
+          typesLoading={typesLoading}
+          enginesLoading={enginesLoading}
           dataMessage={dataMessage}
-          loadVisualData={loadVisualData}
           deleteBrand={deleteBrand}
           deleteModel={deleteModel}
           deleteType={deleteType}
@@ -623,13 +711,13 @@ export default function AdminPage() {
           renameType={renameType}
           renameEngine={renameEngine}
           selectedBrand={selectedBrand}
-          setSelectedBrand={setSelectedBrand}
+          handleBrandSelect={handleBrandSelect}
           selectedModel={selectedModel}
-          setSelectedModel={setSelectedModel}
+          handleModelSelect={handleModelSelect}
           selectedType={selectedType}
-          setSelectedType={setSelectedType}
+          handleTypeSelect={handleTypeSelect}
           selectedEngine={selectedEngine}
-          setSelectedEngine={setSelectedEngine}
+          handleEngineSelect={handleEngineSelect}
         />
 
         {/* Data Editor Section
@@ -870,11 +958,16 @@ function BackupSection({
 
 // Visual Editor Section Component
 function VisualEditorSection({
-  t, showVisualEditor, setShowVisualEditor, visualData, dataLoading, dataMessage,
-  loadVisualData, deleteBrand, deleteModel, deleteType, deleteEngine,
+  showVisualEditor, setShowVisualEditor,
+  brands, models, types, engines,
+  brandsLoading, modelsLoading, typesLoading, enginesLoading,
+  dataMessage,
+  deleteBrand, deleteModel, deleteType, deleteEngine,
   renameBrand, renameModel, renameType, renameEngine,
-  selectedBrand, setSelectedBrand, selectedModel, setSelectedModel,
-  selectedType, setSelectedType, selectedEngine, setSelectedEngine
+  selectedBrand, handleBrandSelect,
+  selectedModel, handleModelSelect,
+  selectedType, handleTypeSelect,
+  selectedEngine, handleEngineSelect
 }) {
   return (
     <div className="card" style={{ marginBottom: '24px' }}>
@@ -897,16 +990,6 @@ function VisualEditorSection({
 
       {showVisualEditor && (
         <div style={{ marginTop: '20px' }}>
-          <button
-            onClick={loadVisualData}
-            disabled={dataLoading}
-            className="btn btn-search"
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}
-          >
-            <RefreshCw size={16} className={dataLoading ? 'spin' : ''} />
-            {dataLoading ? 'Loading...' : 'Load Data'}
-          </button>
-
           {dataMessage.text && (
             <div style={{
               padding: '12px',
@@ -926,15 +1009,20 @@ function VisualEditorSection({
             </div>
           )}
 
-          {visualData && (
+          {brandsLoading ? (
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <RefreshCw size={24} className="spin" />
+              <p>Loading brands...</p>
+            </div>
+          ) : (
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px' }}>
               {/* Brands List */}
               <div style={{ background: 'rgba(50, 55, 60, 0.3)', borderRadius: '8px', padding: '16px' }}>
                 <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--primary)' }}>
-                  Brands ({visualData.brands?.length || 0})
+                  Brands ({brands?.length || 0})
                 </h4>
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  {visualData.brands?.map(brand => (
+                  {brands?.map(brand => (
                     <div
                       key={brand.id}
                       style={{
@@ -947,12 +1035,7 @@ function VisualEditorSection({
                         justifyContent: 'space-between',
                         alignItems: 'center'
                       }}
-                      onClick={() => {
-                        setSelectedBrand(brand);
-                        setSelectedModel(null);
-                        setSelectedType(null);
-                        setSelectedEngine(null);
-                      }}
+                      onClick={() => handleBrandSelect(brand)}
                     >
                       <span style={{ fontSize: '0.85rem', flex: 1 }}>{brand.name}</span>
                       <div style={{ display: 'flex', gap: '4px' }}>
@@ -995,22 +1078,18 @@ function VisualEditorSection({
               </div>
 
               {/* Models List */}
-              {selectedBrand && (() => {
-                const filteredModels = visualData.models?.filter(m => m.brandId === selectedBrand.id) || [];
-                console.log('🔍 Filtering models for brand:', {
-                  brandId: selectedBrand.id,
-                  brandName: selectedBrand.name,
-                  totalModels: visualData.models?.length,
-                  filteredCount: filteredModels.length,
-                  allModels: visualData.models?.map(m => ({ id: m.id, name: m.name, brandId: m.brandId }))
-                });
-                return (
-                  <div style={{ background: 'rgba(50, 55, 60, 0.3)', borderRadius: '8px', padding: '16px' }}>
-                    <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--primary)' }}>
-                      Models - {selectedBrand.name} ({filteredModels.length})
-                    </h4>
+              {selectedBrand && (
+                <div style={{ background: 'rgba(50, 55, 60, 0.3)', borderRadius: '8px', padding: '16px' }}>
+                  <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--primary)' }}>
+                    Models - {selectedBrand.name} ({models?.length || 0})
+                  </h4>
+                  {modelsLoading ? (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                      <RefreshCw size={16} className="spin" />
+                    </div>
+                  ) : (
                     <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                      {filteredModels.map(model => (
+                      {models?.map(model => (
                       <div
                         key={model.id}
                         style={{
@@ -1023,11 +1102,7 @@ function VisualEditorSection({
                           justifyContent: 'space-between',
                           alignItems: 'center'
                         }}
-                        onClick={() => {
-                          setSelectedModel(model);
-                          setSelectedType(null);
-                          setSelectedEngine(null);
-                        }}
+                        onClick={() => handleModelSelect(model)}
                       >
                         <span style={{ fontSize: '0.85rem', flex: 1 }}>{model.name}</span>
                         <div style={{ display: 'flex', gap: '4px' }}>
@@ -1067,35 +1142,37 @@ function VisualEditorSection({
                       </div>
                     ))}
                   </div>
+                  )}
                 </div>
-                );
-              })()}
+              )}
 
               {/* Types/Generations List */}
               {selectedModel && (
                 <div style={{ background: 'rgba(50, 55, 60, 0.3)', borderRadius: '8px', padding: '16px' }}>
                   <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--primary)' }}>
-                    Generations - {selectedModel.name} ({visualData.types?.filter(t => t.modelId === selectedModel.id).length || 0})
+                    Generations - {selectedModel.name} ({types?.length || 0})
                   </h4>
-                  <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    {visualData.types?.filter(t => t.modelId === selectedModel.id).map(type => (
-                      <div
-                        key={type.id}
-                        style={{
-                          padding: '8px',
-                          marginBottom: '4px',
-                          background: selectedType?.id === type.id ? 'rgba(184, 192, 200, 0.2)' : 'rgba(255,255,255,0.05)',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}
-                        onClick={() => {
-                          setSelectedType(type);
-                          setSelectedEngine(null);
-                        }}
-                      >
+                  {typesLoading ? (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                      <RefreshCw size={16} className="spin" />
+                    </div>
+                  ) : (
+                    <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                      {types?.map(type => (
+                        <div
+                          key={type.id}
+                          style={{
+                            padding: '8px',
+                            marginBottom: '4px',
+                            background: selectedType?.id === type.id ? 'rgba(184, 192, 200, 0.2)' : 'rgba(255,255,255,0.05)',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                          onClick={() => handleTypeSelect(type)}
+                        >
                         <span style={{ fontSize: '0.85rem', flex: 1 }}>{type.name}</span>
                         <div style={{ display: 'flex', gap: '4px' }}>
                           <button
@@ -1131,9 +1208,10 @@ function VisualEditorSection({
                             <Trash2 size={14} />
                           </button>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1141,24 +1219,29 @@ function VisualEditorSection({
               {selectedType && (
                 <div style={{ background: 'rgba(50, 55, 60, 0.3)', borderRadius: '8px', padding: '16px' }}>
                   <h4 style={{ margin: '0 0 12px 0', fontSize: '0.9rem', color: 'var(--primary)' }}>
-                    Engines - {selectedType.name} ({visualData.engines?.filter(e => e.typeId === selectedType.id).length || 0})
+                    Engines - {selectedType.name} ({engines?.length || 0})
                   </h4>
-                  <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                    {visualData.engines?.filter(e => e.typeId === selectedType.id).map(engine => (
-                      <div
-                        key={engine.id}
-                        style={{
-                          padding: '8px',
-                          marginBottom: '4px',
-                          background: selectedEngine?.id === engine.id ? 'rgba(184, 192, 200, 0.2)' : 'rgba(255,255,255,0.05)',
-                          borderRadius: '4px',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center'
-                        }}
-                        onClick={() => setSelectedEngine(engine)}
-                      >
+                  {enginesLoading ? (
+                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                      <RefreshCw size={16} className="spin" />
+                    </div>
+                  ) : (
+                    <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
+                      {engines?.map(engine => (
+                        <div
+                          key={engine.id}
+                          style={{
+                            padding: '8px',
+                            marginBottom: '4px',
+                            background: selectedEngine?.id === engine.id ? 'rgba(184, 192, 200, 0.2)' : 'rgba(255,255,255,0.05)',
+                            borderRadius: '4px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                          onClick={() => handleEngineSelect(engine)}
+                        >
                         <div style={{ fontSize: '0.85rem', flex: 1 }}>
                           <div>{engine.name}</div>
                           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
@@ -1199,9 +1282,10 @@ function VisualEditorSection({
                             <Trash2 size={14} />
                           </button>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

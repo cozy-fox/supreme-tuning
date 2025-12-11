@@ -1278,27 +1278,38 @@ input::placeholder {
 
 @media (max-width: 900px) {
   .stage-content { grid-template-columns: 1fr; }
-  .stage-description { border-right: none; border-bottom: 1px solid var(--border); padding: 30px; }
-  .stage-stats { padding: 30px; }
+  .stage-description { border-right: none; border-bottom: 1px solid var(--border); padding: 24px; }
+  .stage-stats { padding: 24px; }
   .stage-tab { padding: 12px 32px; font-size: 1.1rem; }
 }
 
 @media (max-width: 768px) {
-  .container { padding: 0 12px; }
+  .container { padding: 40px 20px; }
   h1 {
     font-size: 1.5rem !important;
     line-height: 1.2;
   }
   h2 { font-size: 1.3rem; }
   .grid-brands {
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
   }
   .brand-card {
-    padding: 12px;
-    min-height: 100px;
+    padding: 24px;
+    min-height: 140px;
   }
+
+  .brand-card img {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .brand-card p {
+    font-size: 0.95rem !important;
+    margin-top: 12px !important;
+  }
+
   .btn, .btn-secondary { padding: 10px 16px; font-size: 0.85rem; }
 
   .selector-container {
@@ -1365,8 +1376,9 @@ input::placeholder {
 }
 
 @media (max-width: 600px) {
-  .stage-description, .stage-stats { padding: 20px; }
-  .stage-header h3 { font-size: 1.5rem; flex-wrap: wrap; }
+  .stage-description, .stage-stats { padding: 16px; }
+  .stage-header h3 { font-size: 1.3rem; flex-wrap: wrap; margin-bottom: 16px !important; }
+  .stage-header h2 { font-size: 0.85rem; margin-bottom: 8px !important; }
   .action-buttons { flex-direction: column; }
   .breadcrumb { font-size: 0.75rem; }
 
@@ -1377,6 +1389,87 @@ input::placeholder {
   .fuel-btn {
     width: 100%;
     text-align: center;
+  }
+
+  /* Compact feature list on mobile */
+  .feature-list {
+    margin: 0 0 16px 0;
+  }
+
+  .feature-list li {
+    padding: 6px 0;
+    font-size: 0.9rem;
+    gap: 8px;
+  }
+
+  .feature-list li svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Compact power bars on mobile */
+  .power-bar-container {
+    height: 28px;
+    margin: 8px 0;
+  }
+
+  .power-comparison {
+    margin-bottom: 16px;
+  }
+
+  .power-comparison h4 {
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+
+  /* Compact upgrade requirements */
+  .upgrade-requirements {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+
+  .upgrade-requirements h4 {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  .upgrade-requirements ul li {
+    font-size: 0.85rem;
+    padding: 4px 0;
+  }
+
+  /* Compact stage selector on mobile */
+  .stage-selector-wrapper {
+    margin-bottom: 20px;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .stage-dropdown {
+    padding: 14px 16px;
+    font-size: 1rem;
+  }
+
+  .stage-counter {
+    font-size: 0.9rem;
+  }
+
+  .stage-arrow-btn {
+    min-width: 48px;
+    min-height: 48px;
+  }
+
+  /* Compact price on mobile */
+  .price-row {
+    padding: 16px;
+  }
+
+  .price-row .price-label {
+    font-size: 0.95rem;
+  }
+
+  .price-row .price-value {
+    font-size: 1.5rem;
   }
 
   /* Even smaller header */
@@ -1397,8 +1490,8 @@ input::placeholder {
 @media (max-width: 480px) {
   .grid-brands {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
-    margin-top: 12px;
+    gap: 12px;
+    margin-top: 16px;
   }
 
   h1 {
@@ -1406,7 +1499,7 @@ input::placeholder {
   }
 
   .hero-section {
-    padding: 15px 0 10px !important;
+    padding: 20px 0 15px !important;
   }
 
   .hero-section h1 {
@@ -1414,19 +1507,29 @@ input::placeholder {
   }
 
   .hero-section p {
-    font-size: 0.75rem !important;
+    font-size: 0.8rem !important;
   }
 
   .container {
-    padding: 0 10px !important;
+    padding: 30px 16px !important;
   }
 
   .brand-card {
-    padding: 10px;
-    min-height: 90px;
+    padding: 20px;
+    min-height: 120px;
+  }
+
+  .brand-card img {
+    width: 60px !important;
+    height: 60px !important;
+  }
+
+  .brand-card p {
+    font-size: 0.9rem !important;
+    margin-top: 10px !important;
   }
 
   main {
-    padding: 10px 0;
+    padding: 0;
   }
 }

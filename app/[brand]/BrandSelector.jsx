@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/AuthContext';
 import { useLanguage } from '@/components/LanguageContext';
-import { Search, Car, Settings, Gauge, Zap, ChevronRight } from 'lucide-react';
+import { Search, Car, Settings, Gauge, ChevronRight } from 'lucide-react';
 
 export default function BrandSelector({ brand, models }) {
   const router = useRouter();
@@ -17,7 +17,7 @@ export default function BrandSelector({ brand, models }) {
   const [selModel, setSelModel] = useState(null);
   const [selType, setSelType] = useState(null);
   const [selEngine, setSelEngine] = useState(null);
-  const [engineType, setEngineType] = useState(null);
+  // const [engineType, setEngineType] = useState(null); // Fuel type filter disabled
   const [loading, setLoading] = useState(false);
 
   const handleModel = useCallback(async (e) => {
@@ -47,7 +47,7 @@ export default function BrandSelector({ brand, models }) {
     setSelType(type);
     setEngines([]);
     setSelEngine(null);
-    setEngineType(null);
+    // setEngineType(null); // Fuel type filter disabled
 
     if (type) {
       setLoading(true);
@@ -67,15 +67,15 @@ export default function BrandSelector({ brand, models }) {
     setSelEngine(engine);
   }, [engines]);
 
+  // Fuel type filter disabled - show all engines
   const filteredEngines = useMemo(() => {
-    if (!engineType) return engines;
-    return engines.filter(e => e.type === engineType);
-  }, [engines, engineType]);
-
-  const engineTypes = useMemo(() => {
-    const types = [...new Set(engines.map(e => e.type).filter(Boolean))];
-    return types;
+    return engines;
   }, [engines]);
+
+  // const engineTypes = useMemo(() => {
+  //   const types = [...new Set(engines.map(e => e.type).filter(Boolean))];
+  //   return types;
+  // }, [engines]);
 
   const canSearch = selModel && selType && selEngine;
 
@@ -146,15 +146,15 @@ export default function BrandSelector({ brand, models }) {
             <option value="">{t('selectEngine')}</option>
             {filteredEngines.map(e => (
               <option key={e.id} value={e.id}>
-                {e.name}{e.power ? ` ${e.power}hp` : ''} - {e.description} ({e.type})
+                {e.name}{e.power ? ` ${e.power}${t('hp')}` : ''} - {e.description} ({e.type})
               </option>
             ))}
           </select>
         </div>
       </div>
 
-      {/* Fuel Type Filter (shown when multiple types available) */}
-      {selType && engineTypes.length > 1 && (
+      {/* Fuel Type Filter - DISABLED per user request */}
+      {/* {selType && engineTypes.length > 1 && (
         <div className="fuel-filter animate-in">
           <label className="selector-label">
             <Zap size={16} />
@@ -178,7 +178,7 @@ export default function BrandSelector({ brand, models }) {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Search Button */}
       <div className="search-row">

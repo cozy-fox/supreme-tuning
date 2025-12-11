@@ -59,6 +59,7 @@ export default function Header() {
             alt="Supreme Tuning"
             width={50}
             height={50}
+            priority
             style={{ objectFit: 'contain' }}
           />
           <div>

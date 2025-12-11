@@ -45,7 +45,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="nl" data-theme="dark" className="notranslate" translate="no">
+    <html lang="nl" data-theme="dark" data-scroll-behavior="smooth" className="notranslate" translate="no">
       <head>
         <meta name="google" content="notranslate" />
       </head>

@@ -153,7 +153,7 @@ export default function BrandSelector({ brand, models }) {
         </div>
       </div>
 
-      {/* Fuel Type Filter (shown when multiple types available) */}
+      {/* Fuel Type Filter (shown when multiple types available)
       {selType && engineTypes.length > 1 && (
         <div className="fuel-filter animate-in">
           <label className="selector-label">
@@ -178,7 +178,7 @@ export default function BrandSelector({ brand, models }) {
             ))}
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Search Button */}
       <div className="search-row">

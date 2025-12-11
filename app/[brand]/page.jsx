@@ -45,25 +45,25 @@ export default async function BrandPage({ params }) {
   return (
     <>
       <Header />
-      <main className="container" style={{ padding: '40px 24px' }}>
+      <main className="container">
         {/* Breadcrumb */}
-        <nav className="breadcrumb">
+        <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
           <a href="/">Home</a>
           <span>›</span>
           <span className="current">{brand.name}</span>
         </nav>
 
         {/* Hero */}
-        <div className="hero-section">
+        <div className="hero-section" style={{ padding: '20px 0 15px' }}>
           <h1>{brand.name} Chiptuning</h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
             Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken
           </p>
         </div>
 
         {/* Client-side selector component */}
-        <BrandSelector 
-          brand={brand} 
+        <BrandSelector
+          brand={brand}
           models={models}
         />
       </main>

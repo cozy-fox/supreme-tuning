@@ -48,6 +48,19 @@ export default function RootLayout({ children }) {
     <html lang="nl" data-theme="dark" className="notranslate" translate="no">
       <head>
         <meta name="google" content="notranslate" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Detect if in iframe and add class
+              if (window.self !== window.top) {
+                document.documentElement.classList.add('iframe-mode');
+                document.addEventListener('DOMContentLoaded', function() {
+                  document.body.classList.add('iframe-mode');
+                });
+              }
+            `,
+          }}
+        />
       </head>
       <body className="notranslate" translate="no">
         <LanguageProvider>

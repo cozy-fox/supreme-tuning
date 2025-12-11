@@ -18,11 +18,11 @@ export default async function HomePage() {
   return (
     <>
       <Header />
-      <main className="container" style={{ padding: '40px 24px' }}>
+      <main className="container">
         <HeroSection />
 
         {/* Brand Grid */}
-        <div className="grid-brands" style={{ marginTop: '40px' }}>
+        <div className="grid-brands">
           {brands.map((brand) => (
             <BrandCard key={brand.id} brand={brand} />
           ))}

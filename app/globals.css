@@ -65,9 +65,51 @@
   padding: 0;
 }
 
+/* Iframe-specific optimizations */
+body.iframe-mode {
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+body.iframe-mode #root {
+  height: 100vh;
+  max-height: 100vh;
+}
+
+body.iframe-mode main {
+  max-height: calc(100vh - 60px);
+}
+
+body.iframe-mode .hero-section {
+  padding: 15px 0 10px !important;
+}
+
+body.iframe-mode .hero-section h1 {
+  font-size: 1.5rem !important;
+  margin-bottom: 5px !important;
+}
+
+body.iframe-mode .hero-section p {
+  font-size: 0.85rem !important;
+}
+
+body.iframe-mode .grid-brands {
+  margin-top: 15px !important;
+  gap: 12px !important;
+}
+
+body.iframe-mode .brand-card {
+  padding: 12px !important;
+  min-height: 100px !important;
+}
+
 html {
   font-size: 16px;
   scroll-behavior: smooth;
+  /* Fixed height for iframe embedding */
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
@@ -80,7 +122,9 @@ body {
   background-repeat: no-repeat;
   color: var(--text-main);
   line-height: 1.6;
-  min-height: 100vh;
+  /* Fixed height for iframe - no min-height */
+  height: 100%;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-image 0.3s ease, background-color 0.3s ease;
@@ -90,7 +134,11 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
-  min-height: 100vh;
+  /* Fixed height container */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 /* Typography */
@@ -124,16 +172,78 @@ h3 {
   color: var(--primary);
 }
 
-/* Container */
+/* Container - Fixed height for iframe */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+  /* Enable scrolling within fixed height */
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom scrollbar for better UX */
+.container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Header - Compact and fixed for iframe */
+header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+}
+
+/* Main content area - scrollable */
+main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 0;
+}
+
+main::-webkit-scrollbar {
+  width: 8px;
+}
+
+main::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+main::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+main::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-hover);
 }
 
 /* Premium Card Component */
@@ -163,18 +273,22 @@ a {
   transform: translateY(-2px);
 }
 
-/* Brand Card specific styling */
+/* Brand Card specific styling - Compact for iframe */
 .brand-card {
   background: var(--chrome-gradient-strong);
   border: 1px solid var(--border-light);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 10px;
+  padding: 16px;
   cursor: pointer;
   text-align: center;
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-silver);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .brand-card::before {
@@ -223,11 +337,13 @@ a {
   justify-content: space-between;
 }
 
-/* Grid for brands */
+/* Grid for brands - Compact for iframe */
 .grid-brands {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+  padding-bottom: 20px;
 }
 
 /* Form Elements */
@@ -439,11 +555,12 @@ input::placeholder {
   animation: spin 0.8s linear infinite;
 }
 
-/* Hero Section */
+/* Hero Section - Compact for iframe */
 .hero-section {
   text-align: center;
-  padding: 60px 0 40px;
+  padding: 30px 0 20px;
   position: relative;
+  flex-shrink: 0;
 }
 
 .hero-section::after {
@@ -452,9 +569,19 @@ input::placeholder {
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
+  width: 100px;
   height: 2px;
-  background: linear-gradient(90deg, transparent, var(--primary), transparent);
+  background: var(--chrome-gradient-strong);
+}
+
+.hero-section h1 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.hero-section p {
+  font-size: 1rem;
+  margin: 0;
 }
 
 /* Selection Card */
@@ -994,15 +1121,22 @@ input::placeholder {
 }
 
 @media (max-width: 768px) {
-  .container { padding: 0 16px; }
+  .container { padding: 0 12px; }
   h1 {
-    font-size: 1.8rem !important;
+    font-size: 1.5rem !important;
     line-height: 1.2;
   }
-  h2 { font-size: 1.5rem; }
-  .grid-brands { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
-  .brand-card { padding: 16px; }
-  .btn, .btn-secondary { padding: 12px 20px; font-size: 0.9rem; }
+  h2 { font-size: 1.3rem; }
+  .grid-brands {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+  }
+  .brand-card {
+    padding: 12px;
+    min-height: 100px;
+  }
+  .btn, .btn-secondary { padding: 10px 16px; font-size: 0.85rem; }
 
   .selector-container {
     padding: 24px 16px;
@@ -1013,32 +1147,32 @@ input::placeholder {
     padding: 16px 32px;
   }
 
-  /* Header responsive */
+  /* Header responsive - Compact */
   header {
-    padding: 10px 16px !important;
+    padding: 8px 12px !important;
   }
 
   header h1 {
-    font-size: 1.1rem !important;
+    font-size: 1rem !important;
   }
 
   header p {
-    font-size: 0.55rem !important;
-    letter-spacing: 2px !important;
+    font-size: 0.5rem !important;
+    letter-spacing: 1.5px !important;
   }
 
   header img {
-    width: 40px !important;
-    height: 40px !important;
+    width: 35px !important;
+    height: 35px !important;
   }
 
   header nav {
-    gap: 8px !important;
+    gap: 6px !important;
   }
 
   .btn-secondary {
-    padding: 8px 12px !important;
-    font-size: 0.75rem !important;
+    padding: 6px 10px !important;
+    font-size: 0.7rem !important;
   }
 
   .btn-secondary .btn-text {
@@ -1046,20 +1180,24 @@ input::placeholder {
   }
 
   .btn-icon {
-    padding: 8px 10px !important;
+    padding: 6px 8px !important;
   }
 
-  /* Hero section responsive */
+  /* Hero section responsive - Compact */
   .hero-section {
-    padding: 40px 0 30px !important;
+    padding: 20px 0 15px !important;
   }
 
   .hero-section h1 {
-    font-size: 1.8rem !important;
+    font-size: 1.5rem !important;
   }
 
   .hero-section p {
-    font-size: 0.95rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  main {
+    padding: 15px 0;
   }
 }
 
@@ -1094,21 +1232,38 @@ input::placeholder {
 }
 
 @media (max-width: 480px) {
-  .grid-brands { grid-template-columns: repeat(2, 1fr); }
+  .grid-brands {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+  }
 
   h1 {
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
+  }
+
+  .hero-section {
+    padding: 15px 0 10px !important;
   }
 
   .hero-section h1 {
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
   }
 
   .hero-section p {
-    font-size: 0.85rem !important;
+    font-size: 0.75rem !important;
   }
 
   .container {
-    padding: 0 12px !important;
+    padding: 0 10px !important;
+  }
+
+  .brand-card {
+    padding: 10px;
+    min-height: 90px;
+  }
+
+  main {
+    padding: 10px 0;
   }
 }

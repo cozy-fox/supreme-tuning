@@ -126,7 +126,7 @@ export default function AdminPage() {
   return (
     <>
       <Header />
-      <main className="container" style={{ padding: '40px 24px', maxWidth: '1200px' }}>
+      <main className="container" style={{ maxWidth: '1200px' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div style={{
             background: 'linear-gradient(135deg, #a8b0b8 0%, #d0d8e0 100%)',

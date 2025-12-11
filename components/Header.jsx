@@ -32,13 +32,7 @@ export default function Header() {
 
   return (
     <header style={{
-      background: 'var(--header-bg)',
-      borderBottom: '1px solid var(--border)',
-      padding: '12px 24px',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      backdropFilter: 'blur(10px)',
+      padding: '10px 20px',
     }}>
       <div style={{
         maxWidth: '1200px',

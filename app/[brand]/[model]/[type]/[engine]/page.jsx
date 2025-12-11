@@ -59,7 +59,7 @@ export default async function ResultsPage({ params }) {
     brand: brandName,
     model: modelName,
     type: typeName,
-    engine: engineData?.name || '',
+    engine: engine,
     engineDescription: engineData?.description || '',
   };
 

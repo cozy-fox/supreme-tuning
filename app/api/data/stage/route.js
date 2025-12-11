@@ -1,8 +1,22 @@
-import { getData, saveData } from '@/lib/data';
+import {
+  getBrandByName,
+  getModelByName,
+  getTypeByName,
+  getEngineByName,
+  getStages,
+  updateStage
+} from '@/lib/data';
 import { requireAdmin } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import { getEngineById } from '@/lib/data-json';
 
+/**
+ * PUT /api/data/stage
+ * Update a stage using direct MongoDB queries (no loading all data)
+ */
 export async function PUT(request) {
+  console.log('PUT /api/data/stage');
+
   const authResult = requireAdmin(request);
   if (authResult.error) {
     return NextResponse.json(
@@ -14,6 +28,7 @@ export async function PUT(request) {
   try {
     const { brand, model, type, engine, stageIndex, stageData } = await request.json();
 
+    // Validate required fields
     if (!brand || !model || !type || !engine || stageIndex === undefined || !stageData) {
       return NextResponse.json(
         { message: 'Missing required fields' },
@@ -21,14 +36,8 @@ export async function PUT(request) {
       );
     }
 
-    const data = await getData();
-
-    // MongoDB uses flat structure - find entities by name/slug
-    // Find the brand
-    const brandData = data.brands?.find(b =>
-      b.name?.toLowerCase() === brand.toLowerCase() ||
-      b.slug?.toLowerCase() === brand.toLowerCase()
-    );
+    // Step 1: Find brand using direct MongoDB query
+    const brandData = await getBrandByName(brand);
 
     if (!brandData) {
       return NextResponse.json(
@@ -37,13 +46,8 @@ export async function PUT(request) {
       );
     }
 
-    // Find the model (in flat models array, filtered by brandId)
-    const modelData = data.models?.find(m =>
-      m.brandId === brandData.id && (
-        m.name?.toLowerCase() === model.toLowerCase() ||
-        m.slug?.toLowerCase() === model.toLowerCase()
-      )
-    );
+    // Step 2: Find model using direct MongoDB query
+    const modelData = await getModelByName(brandData.id, model);
 
     if (!modelData) {
       return NextResponse.json(
@@ -52,13 +56,8 @@ export async function PUT(request) {
       );
     }
 
-    // Find the type/generation (in flat types array, filtered by modelId)
-    const typeData = data.types?.find(t =>
-      t.modelId === modelData.id && (
-        t.name?.toLowerCase() === type.toLowerCase() ||
-        t.slug?.toLowerCase() === type.toLowerCase()
-      )
-    );
+    // Step 3: Find type using direct MongoDB query
+    const typeData = await getTypeByName(modelData.id, type);
 
     if (!typeData) {
       return NextResponse.json(
@@ -67,14 +66,8 @@ export async function PUT(request) {
       );
     }
 
-    // Find the engine (in flat engines array, filtered by typeId)
-    const engineData = data.engines?.find(e =>
-      e.typeId === typeData.id && (
-        e.name?.toLowerCase() === engine.toLowerCase() ||
-        e.slug?.toLowerCase() === engine.toLowerCase() ||
-        e.id?.toString() === engine.toString()
-      )
-    );
+    // Step 4: Find engine using direct MongoDB query
+    const engineData = await getEngineById(engine);
 
     if (!engineData) {
       return NextResponse.json(
@@ -83,8 +76,8 @@ export async function PUT(request) {
       );
     }
 
-    // Find the stages for this engine (in flat stages array, filtered by engineId)
-    const engineStages = data.stages?.filter(s => s.engineId === engineData.id) || [];
+    // Step 5: Get stages for this engine using direct MongoDB query
+    const engineStages = await getStages(engineData.id);
 
     if (!engineStages || engineStages.length === 0) {
       return NextResponse.json(
@@ -93,6 +86,7 @@ export async function PUT(request) {
       );
     }
 
+    // Validate stage index
     if (stageIndex < 0 || stageIndex >= engineStages.length) {
       return NextResponse.json(
         { message: `Stage index ${stageIndex} out of range (0-${engineStages.length - 1})` },
@@ -103,27 +97,41 @@ export async function PUT(request) {
     // Get the specific stage to update
     const stageToUpdate = engineStages[stageIndex];
 
-    // Update only the allowed fields
+    // Prepare update data (only allowed fields)
     const allowedFields = ['stageName', 'stockHp', 'tunedHp', 'stockNm', 'tunedNm', 'price'];
+    const updateData = {};
+
     allowedFields.forEach(field => {
       if (stageData[field] !== undefined) {
-        stageToUpdate[field] = stageData[field];
+        updateData[field] = stageData[field];
       }
     });
 
-    // Update the stage in the data.stages array
-    const stageArrayIndex = data.stages.findIndex(s => s.id === stageToUpdate.id);
-    if (stageArrayIndex !== -1) {
-      data.stages[stageArrayIndex] = stageToUpdate;
+    // Calculate gains if HP/NM values are updated
+    if (updateData.stockHp !== undefined || updateData.tunedHp !== undefined) {
+      const stockHp = updateData.stockHp ?? stageToUpdate.stockHp;
+      const tunedHp = updateData.tunedHp ?? stageToUpdate.tunedHp;
+      if (stockHp !== null && tunedHp !== null) {
+        updateData.gainHp = tunedHp - stockHp;
+      }
     }
 
-    // Save the updated data back to MongoDB
-    await saveData(data);
+    if (updateData.stockNm !== undefined || updateData.tunedNm !== undefined) {
+      const stockNm = updateData.stockNm ?? stageToUpdate.stockNm;
+      const tunedNm = updateData.tunedNm ?? stageToUpdate.tunedNm;
+      if (stockNm !== null && tunedNm !== null) {
+        updateData.gainNm = tunedNm - stockNm;
+      }
+    }
+
+    // Step 6: Update stage using direct MongoDB query (single operation!)
+    await updateStage(stageToUpdate.id, updateData);
 
     return NextResponse.json({
       message: 'Stage updated successfully',
-      stage: stageToUpdate
+      stage: { ...stageToUpdate, ...updateData }
     });
+
   } catch (error) {
     console.error('❌ Stage update error:', error);
     return NextResponse.json(

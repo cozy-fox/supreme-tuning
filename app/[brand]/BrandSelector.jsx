@@ -2,13 +2,11 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/components/AuthContext';
 import { useLanguage } from '@/components/LanguageContext';
-import { Search, Car, Settings, Gauge, Zap, ChevronRight } from 'lucide-react';
+import { Search, Car, Settings, Gauge, ChevronRight } from 'lucide-react';
 
 export default function BrandSelector({ brand, models }) {
   const router = useRouter();
-  const { fetchAPI } = useAuth();
   const { t } = useLanguage();
 
   const [types, setTypes] = useState([]);
@@ -32,14 +30,15 @@ export default function BrandSelector({ brand, models }) {
     if (model) {
       setLoading(true);
       try {
-        const data = await fetchAPI(`types?modelId=${modelId}`);
+        const res = await fetch(`/api/types?modelId=${modelId}`);
+        const data = await res.json();
         setTypes(data);
       } catch (error) {
         console.error("Error fetching types:", error);
       }
       setLoading(false);
     }
-  }, [models, fetchAPI]);
+  }, [models]);
 
   const handleType = useCallback(async (e) => {
     const typeId = parseInt(e.target.value);
@@ -52,14 +51,15 @@ export default function BrandSelector({ brand, models }) {
     if (type) {
       setLoading(true);
       try {
-        const data = await fetchAPI(`engines?typeId=${typeId}`);
+        const res = await fetch(`/api/engines?typeId=${typeId}`);
+        const data = await res.json();
         setEngines(data);
       } catch (error) {
         console.error("Error fetching engines:", error);
       }
       setLoading(false);
     }
-  }, [types, fetchAPI]);
+  }, [types]);
 
   const handleEngine = useCallback((e) => {
     const engineId = parseInt(e.target.value);
@@ -71,11 +71,6 @@ export default function BrandSelector({ brand, models }) {
     if (!engineType) return engines;
     return engines.filter(e => e.type === engineType);
   }, [engines, engineType]);
-
-  const engineTypes = useMemo(() => {
-    const types = [...new Set(engines.map(e => e.type).filter(Boolean))];
-    return types;
-  }, [engines]);
 
   const canSearch = selModel && selType && selEngine;
 

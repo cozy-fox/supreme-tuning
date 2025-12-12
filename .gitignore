@@ -24,6 +24,7 @@ Thumbs.db
 .local-chromium/
 
 # Environment
+.env
 .env.local
 
 # SSL certificates (self-signed)

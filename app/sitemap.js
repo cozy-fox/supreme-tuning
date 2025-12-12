@@ -12,12 +12,6 @@ export default async function sitemap() {
       changeFrequency: 'weekly',
       priority: 1,
     },
-    {
-      url: `${SITE_URL}/login`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
   ];
 
   // Brand pages

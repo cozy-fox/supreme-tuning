@@ -1,5 +1,4 @@
 import './globals.css';
-import { AuthProvider } from '@/components/AuthContext';
 import { LanguageProvider } from '@/components/LanguageContext';
 import IframeHeightSync from '@/components/IframeHeightSync';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -66,13 +65,11 @@ export default function RootLayout({ children }) {
       </head>
       <body className="notranslate" translate="no">
         <LanguageProvider>
-          <AuthProvider>
-            <IframeHeightSync />
-            <LanguageSelector />
-            <div id="root">
-              {children}
-            </div>
-          </AuthProvider>
+          <IframeHeightSync />
+          <LanguageSelector />
+          <div id="root">
+            {children}
+          </div>
         </LanguageProvider>
       </body>
     </html>

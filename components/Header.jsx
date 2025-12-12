@@ -3,20 +3,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Shield, LogOut, Home, Globe } from 'lucide-react';
-import { useAuth } from './AuthContext';
+import { Home, Globe } from 'lucide-react';
 import { useLanguage } from './LanguageContext';
 import { useState, useRef, useEffect } from 'react';
 
 export default function Header() {
   const pathname = usePathname();
-  const { isAdmin, logout } = useAuth();
   const { language, changeLanguage, t, mounted: langMounted, languages } = useLanguage();
   const [langDropdown, setLangDropdown] = useState(false);
   const dropdownRef = useRef(null);
 
   const isHomePage = pathname === '/';
-  const isAdminPage = pathname?.startsWith('/admin');
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -41,7 +38,6 @@ export default function Header() {
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
-        {/* Logo */}
         <Link href="/" style={{
           display: 'flex',
           alignItems: 'center',
@@ -80,9 +76,7 @@ export default function Header() {
           </div>
         </Link>
 
-        {/* Navigation */}
         <nav style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          {/* Language Selector */}
           <div ref={dropdownRef} style={{ position: 'relative' }}>
             <button
               onClick={() => setLangDropdown(!langDropdown)}
@@ -154,38 +148,6 @@ export default function Header() {
             >
               <Home size={16} />
               <span className="btn-text">{t('home')}</span>
-            </Link>
-          )}
-
-          {isAdmin ? (
-            <>
-              {!isAdminPage && (
-                <Link
-                  href="/admin"
-                  className="btn-secondary"
-                  style={{ padding: '10px 20px', fontSize: '0.85rem' }}
-                >
-                  <Shield size={16} />
-                  <span className="btn-text">{t('admin')}</span>
-                </Link>
-              )}
-              <button
-                onClick={logout}
-                className="btn-secondary"
-                style={{ padding: '10px 20px', fontSize: '0.85rem' }}
-              >
-                <LogOut size={16} />
-                <span className="btn-text">{t('logout')}</span>
-              </button>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              className="btn-secondary"
-              style={{ padding: '10px 20px', fontSize: '0.85rem' }}
-            >
-              <Shield size={16} />
-              <span className="btn-text">{t('login')}</span>
             </Link>
           )}
         </nav>

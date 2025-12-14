@@ -163,7 +163,7 @@ h3 {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* Tablet and up */
@@ -1906,5 +1906,116 @@ input::placeholder {
 
   .fuel-btn {
     width: auto;
+  }
+}
+
+/* ================================
+   Group Selector Styles (Audi RS, BMW M, Mercedes-AMG)
+   Mobile-first design
+   ================================ */
+
+.group-selector-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.group-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.group-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  min-width: 140px;
+  background: var(--chrome-gradient);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.group-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.group-btn:hover::before {
+  left: 100%;
+}
+
+.group-btn:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.group-btn.active {
+  background: linear-gradient(135deg, var(--primary), #8a9199);
+  border-color: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(184, 192, 200, 0.4);
+}
+
+.group-btn.active svg {
+  color: #fff;
+}
+
+.group-btn svg {
+  color: var(--primary);
+  transition: color 0.3s ease;
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+  .group-selector-row {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .group-buttons {
+    gap: 16px;
+  }
+
+  .group-btn {
+    padding: 16px 32px;
+    min-width: 160px;
+    font-size: 0.95rem;
+    border-radius: 12px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  .group-buttons {
+    gap: 20px;
+  }
+
+  .group-btn {
+    padding: 18px 40px;
+    min-width: 180px;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    border-radius: 14px;
   }
 }

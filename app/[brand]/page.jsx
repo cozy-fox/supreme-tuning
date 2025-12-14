@@ -2,6 +2,7 @@ import { getBrands, getModels, getBrandByName } from '@/lib/data';
 import { generateMetadata as generateSeoMetadata } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import BrandSelector from './BrandSelector';
+import { getBrandGroupConfig, brandHasGroups } from '@/lib/brandGroups';
 
 // Generate static params for all brands (SSG)
 export async function generateStaticParams() {
@@ -28,6 +29,31 @@ export async function generateMetadata({ params }) {
   });
 }
 
+/**
+ * Get brand groups configuration (serialized for client)
+ */
+function getBrandGroupsForClient(brandId) {
+  if (!brandHasGroups(brandId)) {
+    return { hasGroups: false, groups: [] };
+  }
+
+  const config = getBrandGroupConfig(brandId);
+  // Serialize groups (remove filter functions which can't be passed to client)
+  const serializedGroups = config.groups.map(group => ({
+    id: group.id,
+    name: group.name,
+    displayName: group.displayName,
+    description: group.description,
+    logo: group.logo,
+  }));
+
+  return {
+    hasGroups: true,
+    brandName: config.brandName,
+    groups: serializedGroups,
+  };
+}
+
 export default async function BrandPage({ params }) {
   const { brand: brandSlug } = await params;
   const brands = await getBrands();
@@ -40,6 +66,7 @@ export default async function BrandPage({ params }) {
   }
 
   const models = await getModels(brand.id);
+  const brandGroups = getBrandGroupsForClient(brand.id);
 
   return (
     <main className="container">
@@ -54,7 +81,10 @@ export default async function BrandPage({ params }) {
       <div className="hero-section" style={{ padding: '20px 0 15px' }}>
         <h1>{brand.name} Chiptuning</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
-          Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken
+          {brandGroups.hasGroups
+            ? 'Selecteer eerst een categorie, dan uw model, generatie en motor'
+            : 'Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken'
+          }
         </p>
       </div>
 
@@ -62,6 +92,7 @@ export default async function BrandPage({ params }) {
       <BrandSelector
         brand={brand}
         models={models}
+        brandGroups={brandGroups}
       />
     </main>
   );

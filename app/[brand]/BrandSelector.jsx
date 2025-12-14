@@ -1,13 +1,17 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/components/LanguageContext';
-import { Search, Car, Settings, Gauge, ChevronRight } from 'lucide-react';
+import { Search, Car, Settings, Gauge, ChevronRight, Zap } from 'lucide-react';
 
-export default function BrandSelector({ brand, models }) {
+export default function BrandSelector({ brand, models: initialModels, brandGroups }) {
   const router = useRouter();
   const { t } = useLanguage();
+
+  // Group selection state (for Audi RS, BMW M, Mercedes-AMG)
+  const [selGroup, setSelGroup] = useState(null);
+  const [filteredModels, setFilteredModels] = useState(initialModels);
 
   const [types, setTypes] = useState([]);
   const [engines, setEngines] = useState([]);
@@ -18,9 +22,38 @@ export default function BrandSelector({ brand, models }) {
   const [engineType, setEngineType] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Check if this brand has groups (Audi, BMW, Mercedes)
+  const hasGroups = brandGroups?.hasGroups || false;
+  const groups = brandGroups?.groups || [];
+
+  // Handle group selection (for brands with performance divisions)
+  const handleGroup = useCallback(async (groupId) => {
+    setSelGroup(groupId);
+    setSelModel(null);
+    setTypes([]);
+    setSelType(null);
+    setEngines([]);
+    setSelEngine(null);
+
+    if (groupId) {
+      setLoading(true);
+      try {
+        const res = await fetch(`/api/models?brandId=${brand.id}&groupId=${groupId}`);
+        const data = await res.json();
+        setFilteredModels(data);
+      } catch (error) {
+        console.error("Error fetching models by group:", error);
+        setFilteredModels(initialModels);
+      }
+      setLoading(false);
+    } else {
+      setFilteredModels(initialModels);
+    }
+  }, [brand.id, initialModels]);
+
   const handleModel = useCallback(async (e) => {
     const modelId = parseInt(e.target.value);
-    const model = models.find(m => m.id === modelId);
+    const model = filteredModels.find(m => m.id === modelId);
     setSelModel(model);
     setTypes([]);
     setSelType(null);
@@ -38,7 +71,7 @@ export default function BrandSelector({ brand, models }) {
       }
       setLoading(false);
     }
-  }, [models]);
+  }, [filteredModels]);
 
   const handleType = useCallback(async (e) => {
     const typeId = parseInt(e.target.value);
@@ -82,6 +115,24 @@ export default function BrandSelector({ brand, models }) {
 
   return (
     <div className="selector-container animate-in" style={{ marginTop: '32px' }}>
+      {/* Group Selection for brands with performance divisions */}
+      {hasGroups && (
+        <div className="group-selector-row" style={{ marginBottom: '24px' }}>
+          <div className="group-buttons">
+            {groups.map(group => (
+              <button
+                key={group.id}
+                className={`group-btn ${selGroup === group.id ? 'active' : ''}`}
+                onClick={() => handleGroup(group.id)}
+              >
+                <Zap size={16} />
+                <span>{group.displayName}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Horizontal Selector Row */}
       <div className="selector-row">
         {/* Model Selector */}
@@ -93,11 +144,11 @@ export default function BrandSelector({ brand, models }) {
           <select
             onChange={handleModel}
             value={selModel?.id || ''}
-            disabled={loading}
+            disabled={loading || (hasGroups && !selGroup)}
             className="selector-select"
           >
-            <option value="">{t('selectModel')}</option>
-            {models.map(m => (
+            <option value="">{hasGroups && !selGroup ? t('selectGroupFirst') || 'Select category first' : t('selectModel')}</option>
+            {filteredModels.map(m => (
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
           </select>

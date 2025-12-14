@@ -22,11 +22,13 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
   const [engineType, setEngineType] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Check if this brand has groups (Audi, BMW, Mercedes)
+  // Check if this brand has groups (from database)
   const hasGroups = brandGroups?.hasGroups || false;
   const groups = brandGroups?.groups || [];
+  const defaultGroupId = brandGroups?.defaultGroupId || null;
 
   // Handle group selection (for brands with performance divisions)
+  // Now uses database groupId instead of filter functions
   const handleGroup = useCallback(async (groupId) => {
     setSelGroup(groupId);
     setSelModel(null);
@@ -38,6 +40,7 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
     if (groupId) {
       setLoading(true);
       try {
+        // Now uses groupId from database instead of string identifier
         const res = await fetch(`/api/models?brandId=${brand.id}&groupId=${groupId}`);
         const data = await res.json();
         setFilteredModels(data);
@@ -50,6 +53,14 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
       setFilteredModels(initialModels);
     }
   }, [brand.id, initialModels]);
+
+  // Auto-select default group on mount for brands without performance divisions
+  useEffect(() => {
+    if (!hasGroups && defaultGroupId && !selGroup) {
+      // Auto-load models for the default group
+      handleGroup(defaultGroupId);
+    }
+  }, [hasGroups, defaultGroupId, selGroup, handleGroup]);
 
   const handleModel = useCallback(async (e) => {
     const modelId = parseInt(e.target.value);
@@ -118,17 +129,87 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
       {/* Group Selection for brands with performance divisions */}
       {hasGroups && (
         <div className="group-selector-row" style={{ marginBottom: '24px' }}>
-          <div className="group-buttons">
-            {groups.map(group => (
-              <button
-                key={group.id}
-                className={`group-btn ${selGroup === group.id ? 'active' : ''}`}
-                onClick={() => handleGroup(group.id)}
-              >
-                <Zap size={16} />
-                <span>{group.displayName}</span>
-              </button>
-            ))}
+          <div className="group-buttons" style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            {groups.map(group => {
+              // Performance group styling
+              const getGroupStyle = () => {
+                const baseStyle = {
+                  padding: '12px 24px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  fontSize: '1rem',
+                  fontWeight: '600',
+                  transition: 'all 0.2s ease',
+                  minWidth: '120px',
+                  justifyContent: 'center'
+                };
+
+                if (!group.isPerformance) {
+                  return {
+                    ...baseStyle,
+                    background: selGroup === group.id ? 'rgba(184, 192, 200, 0.3)' : 'rgba(255,255,255,0.1)',
+                    color: selGroup === group.id ? '#fff' : 'rgba(255,255,255,0.7)',
+                    border: selGroup === group.id ? '2px solid var(--primary)' : '2px solid transparent'
+                  };
+                }
+
+                // Use color from database if available, otherwise use defaults
+                const activeColor = group.color || (() => {
+                  const groupName = (group.name || '').toUpperCase();
+                  // if (groupName === 'RS') return '#ff0000';
+                  // if (groupName === 'M') return '#0066cc';
+                  // if (groupName === 'AMG') return '#00d4aa';
+                  return 'var(--primary)';
+                })();
+
+                const bgColor = 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)';
+
+                return {
+                  ...baseStyle,
+                  background: bgColor,
+                  color: selGroup === group.id ? activeColor : 'rgba(255,255,255,0.9)',
+                  border: selGroup === group.id ? `2px solid ${activeColor}` : '2px solid rgba(255,255,255,0.2)',
+                  boxShadow: selGroup === group.id ? `0 0 20px ${activeColor}40` : 'none'
+                };
+              };
+
+              const getGroupIcon = () => {
+                // Use icon from database if available, otherwise use defaults
+                if (group.icon) return group.icon;
+                const groupName = (group.name || '').toUpperCase();
+                if (groupName === 'RS') return '';
+                if (groupName === 'M') return '';
+                if (groupName === 'AMG') return '';
+                return null;
+              };
+
+              const getGroupColor = () => {
+                // Use color from database if available
+                if (group.color) return group.color;
+                const groupName = (group.name || '').toUpperCase();
+                // if (groupName === 'RS') return '#ff0000';
+                // if (groupName === 'M') return '#0066cc';
+                // if (groupName === 'AMG') return '#00d4aa';
+                return 'var(--primary)';
+              };
+
+              return (
+                <button
+                  key={group.id}
+                  style={getGroupStyle()}
+                  onClick={() => handleGroup(group.id)}
+                >
+                  {/* {group.isPerformance && <span style={{ fontSize: '1.2rem' }}>{getGroupIcon()}</span>} */}
+                  
+                  {group.isPerformance && <Zap size={16} />}
+                  <span>{group.displayName || group.name}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
@@ -199,33 +280,6 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
         </div>
       </div>
 
-      {/* Fuel Type Filter (shown when multiple types available)
-      {selType && engineTypes.length > 1 && (
-        <div className="fuel-filter animate-in">
-          <label className="selector-label">
-            <Zap size={16} />
-            <span>{t('fuelType')}</span>
-          </label>
-          <div className="fuel-buttons">
-            <button
-              className={`fuel-btn ${!engineType ? 'active' : ''}`}
-              onClick={() => { setEngineType(null); setSelEngine(null); }}
-            >
-              {t('allTypes')}
-            </button>
-            {engineTypes.map(type => (
-              <button
-                key={type}
-                className={`fuel-btn ${engineType === type ? 'active' : ''}`}
-                onClick={() => { setEngineType(type); setSelEngine(null); }}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
-        </div>
-      )} */}
-
       {/* Search Button */}
       <div className="search-row">
         <button
@@ -249,4 +303,3 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
     </div>
   );
 }
-

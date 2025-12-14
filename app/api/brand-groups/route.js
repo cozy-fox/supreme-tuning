@@ -1,42 +1,51 @@
 import { NextResponse } from 'next/server';
-import { getBrandGroupConfig, brandHasGroups, BRAND_IDS } from '@/lib/brandGroups';
+import { getGroups, brandHasGroups } from '@/lib/data';
 
 /**
  * GET /api/brand-groups?brandId=1
- * Returns the group configuration for a brand (e.g., Audi with Standard/RS options)
+ * Returns the groups for a brand from the database
+ * Now reads from the 'groups' collection instead of hardcoded config
  */
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const brandId = searchParams.get('brandId');
-    
+
     if (!brandId) {
       return NextResponse.json({ error: 'brandId is required' }, { status: 400 });
     }
-    
+
     const brandIdNum = parseInt(brandId);
-    
-    if (!brandHasGroups(brandIdNum)) {
-      return NextResponse.json({ 
+
+    // Check if this brand has any groups in the database
+    const hasGroups = await brandHasGroups(brandIdNum);
+
+    if (!hasGroups) {
+      return NextResponse.json({
         hasGroups: false,
-        groups: [] 
+        groups: []
       });
     }
-    
-    const config = getBrandGroupConfig(brandIdNum);
-    
-    // Return a serialized version (without the filter functions)
-    const serializedGroups = config.groups.map(group => ({
+
+    // Fetch groups from database
+    const groups = await getGroups(brandIdNum);
+
+    // Map groups to the expected format for the frontend
+    const serializedGroups = groups.map(group => ({
       id: group.id,
       name: group.name,
-      displayName: group.displayName,
-      description: group.description,
-      logo: group.logo,
+      displayName: group.isPerformance ? group.name : 'Standard',
+      description: group.description || '',
+      tagline: group.tagline || null,
+      color: group.color || null,
+      icon: group.icon || null,
+      logo: group.logo || null,
+      isPerformance: group.isPerformance || false,
+      order: group.order || 0,
     }));
-    
+
     return NextResponse.json({
       hasGroups: true,
-      brandName: config.brandName,
       groups: serializedGroups,
     });
   } catch (error) {

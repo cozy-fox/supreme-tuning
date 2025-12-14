@@ -1,8 +1,7 @@
-import { getBrands, getModels, getBrandByName } from '@/lib/data';
+import { getBrands, getModels, getGroups, brandHasGroups, getDefaultGroup } from '@/lib/data';
 import { generateMetadata as generateSeoMetadata } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import BrandSelector from './BrandSelector';
-import { getBrandGroupConfig, brandHasGroups } from '@/lib/brandGroups';
 
 // Generate static params for all brands (SSG)
 export async function generateStaticParams() {
@@ -30,27 +29,35 @@ export async function generateMetadata({ params }) {
 }
 
 /**
- * Get brand groups configuration (serialized for client)
+ * Get brand groups configuration from database
+ * Returns serialized groups for client component
+ * hasGroups will be false if brand only has a Standard group (no selector shown)
  */
-function getBrandGroupsForClient(brandId) {
-  if (!brandHasGroups(brandId)) {
-    return { hasGroups: false, groups: [] };
+async function getBrandGroupsForClient(brandId) {
+  const hasPerformanceGroups = await brandHasGroups(brandId);
+  const groups = await getGroups(brandId);
+
+  // If no performance groups, get the default group ID for auto-selection
+  let defaultGroupId = null;
+  if (!hasPerformanceGroups && groups.length > 0) {
+    defaultGroupId = groups[0].id;
   }
 
-  const config = getBrandGroupConfig(brandId);
-  // Serialize groups (remove filter functions which can't be passed to client)
-  const serializedGroups = config.groups.map(group => ({
+  // Serialize groups for client (already serialized from data.js, just format)
+  const serializedGroups = groups.map(group => ({
     id: group.id,
     name: group.name,
-    displayName: group.displayName,
-    description: group.description,
-    logo: group.logo,
+    displayName: group.isPerformance ? group.name : 'Standard',
+    description: group.description || '',
+    logo: group.logo || null,
+    isPerformance: group.isPerformance || false,
+    order: group.order || 0,
   }));
 
   return {
-    hasGroups: true,
-    brandName: config.brandName,
+    hasGroups: hasPerformanceGroups, // Only true if performance groups exist
     groups: serializedGroups,
+    defaultGroupId, // For auto-selecting when no performance groups
   };
 }
 
@@ -66,7 +73,7 @@ export default async function BrandPage({ params }) {
   }
 
   const models = await getModels(brand.id);
-  const brandGroups = getBrandGroupsForClient(brand.id);
+  const brandGroups = await getBrandGroupsForClient(brand.id);
 
   return (
     <main className="container">

@@ -204,7 +204,7 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
                   onClick={() => handleGroup(group.id)}
                 >
                   {/* {group.isPerformance && <span style={{ fontSize: '1.2rem' }}>{getGroupIcon()}</span>} */}
-                  
+                  {/* {group.isPerformance && <span style={{ fontSize: '1.2rem' }}></span>} */}
                   {group.isPerformance && <Zap size={16} />}
                   <span>{group.displayName || group.name}</span>
                 </button>

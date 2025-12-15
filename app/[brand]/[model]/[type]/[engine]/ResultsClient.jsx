@@ -185,7 +185,7 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
               <span className="bar-label stock-label">{t('stock')}</span>
               <div className="bar-track">
                 <div className="bar-fill bar-stock" style={{ width: `${(stockHp / maxPower) * 100}%` }}>
-                  <span className="bar-value">{stockHp} {t('enginePowerUnit')}</span>
+                  <span className="bar-value">{stockHp} {t('hp')}</span>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
               <span className="bar-label tuned-label">{t('tuned')}</span>
               <div className="bar-track">
                 <div className="bar-fill bar-tuned" style={{ width: `${(tunedHp / maxPower) * 100}%` }}>
-                  <span className="bar-value">{tunedHp} {t('enginePowerUnit')}</span>
+                  <span className="bar-value">{tunedHp} {t('hp')}</span>
                 </div>
               </div>
             </div>

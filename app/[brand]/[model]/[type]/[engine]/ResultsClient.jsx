@@ -179,7 +179,7 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
           <div className="power-stat">
             <div className="stat-header">
               <h4>{t('power')}</h4>
-              <span className="gain-badge">+{hpGain} {t('enginePowerUnit')}</span>
+              <span className="gain-badge">+{hpGain} {t('hp')}</span>
             </div>
             <div className="bar-row">
               <span className="bar-label stock-label">{t('stock')}</span>

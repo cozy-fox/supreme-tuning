@@ -2,6 +2,7 @@ import { getBrands, getModels, getGroups, brandHasGroups, getDefaultGroup } from
 import { generateMetadata as generateSeoMetadata } from '@/lib/seo';
 import { notFound } from 'next/navigation';
 import BrandSelector from './BrandSelector';
+import BrandHero from './BrandHero';
 
 // Generate static params for all brands (SSG)
 export async function generateStaticParams() {
@@ -85,7 +86,8 @@ export default async function BrandPage({ params }) {
       </nav>
 
       {/* Hero */}
-      <div className="hero-section" style={{ padding: '20px 0 15px' }}>
+      <BrandHero brandName={brand.name} />
+      {/* <div className="hero-section" style={{ padding: '20px 0 15px' }}>
         <h1>{brand.name} Chiptuning</h1>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
           {brandGroups.hasGroups
@@ -93,7 +95,7 @@ export default async function BrandPage({ params }) {
             : 'Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken'
           }
         </p>
-      </div>
+      </div> */}
 
       {/* Client-side selector component */}
       <BrandSelector

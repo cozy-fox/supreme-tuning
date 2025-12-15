@@ -228,7 +228,7 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
             disabled={loading || (hasGroups && !selGroup)}
             className="selector-select"
           >
-            <option value="">{hasGroups && !selGroup ? t('selectGroupFirst') || 'Select category first' : t('selectModel')}</option>
+            <option value="">{t('selectModel')}</option>
             {filteredModels.map(m => (
               <option key={m.id} value={m.id}>{m.name}</option>
             ))}
@@ -273,7 +273,7 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
             <option value="">{t('selectEngine')}</option>
             {filteredEngines.map(e => (
               <option key={e.id} value={e.id}>
-                {e.name}{e.power ? ` ${e.power}${t('enginePowerUnit')}` : ''} - {e.description} ({e.type})
+                {e.name}{e.power ? ` ${e.power}` : ''}{t('hp')}  - {e.description} ({e.type})
               </option>
             ))}
           </select>

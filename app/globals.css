@@ -1923,6 +1923,7 @@ input::placeholder {
 
 .group-buttons {
   display: flex;
+  flex-direction: row-reverse;
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;

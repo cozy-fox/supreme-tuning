@@ -1917,7 +1917,7 @@ input::placeholder {
 
 .group-selector-row {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 12px;
 }
 
@@ -1989,7 +1989,7 @@ input::placeholder {
 /* Tablet styles */
 @media (min-width: 768px) {
   .group-selector-row {
-    flex-direction: row;
+    flex-direction: row-reverse;
     justify-content: center;
     align-items: center;
   }

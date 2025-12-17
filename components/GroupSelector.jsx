@@ -32,18 +32,20 @@ export default function GroupSelector({ brand, groups }) {
   // Get the appropriate logo for each group
   const getGroupLogo = (group) => {
     const hasError = imgErrors[group.id];
-    const logoSize = 200;
 
     if (!hasError && group.logo) {
       return (
         <Image
-          src={`/assets/brand_logo/${group.logo}`}
+          src={`${group.logo}`}
           alt={group.name}
-          width={logoSize}
-          height={logoSize}
+          width={240}
+          height={140}
           style={{
             objectFit: 'contain',
-            filter: 'brightness(0.95)',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            width: 'auto',
+            height: 'auto',
           }}
           onError={() => handleImageError(group.id)}
         />
@@ -55,22 +57,26 @@ export default function GroupSelector({ brand, groups }) {
       <Image
         src="/assets/brand_logo/default-group.svg"
         alt={group.name}
-        width={logoSize}
-        height={logoSize}
+        width={240}
+        height={140}
         style={{
           objectFit: 'contain',
-          filter: 'brightness(0.95)',
+          maxWidth: '100%',
+          maxHeight: '100%',
+          width: 'auto',
+          height: 'auto',
         }}
       />
     );
   };
 
   return (
-    <div style={{
-      maxWidth: '1200px',
-      margin: '0 auto',
-      padding: '0 20px'
-    }}>
+    // <div style={{
+    //   maxWidth: '1200px',
+    //   margin: '0 auto',
+    //   padding: '0 20px'
+    // }}>
+    <>
       {/* Group Cards Grid */}
       <div style={{
         display: 'grid',
@@ -110,14 +116,16 @@ export default function GroupSelector({ brand, groups }) {
           >
             {/* Logo */}
             <div style={{
-              width: '280px',
+              width: '100%',
+              maxWidth: '280px',
               height: '160px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              background: 'rgba(0, 0, 0, 0.3)',
+              background: 'rgba(0, 0, 0, 0.2)',
               borderRadius: '12px',
-              padding: '20px'
+              padding: '20px',
+              overflow: 'hidden'
             }}>
               {getGroupLogo(group)}
             </div>
@@ -133,7 +141,7 @@ export default function GroupSelector({ brand, groups }) {
                 marginBottom: '12px',
                 letterSpacing: '0.5px'
               }}>
-                {group.displayName || group.name}
+                {group.displayName }
               </h2>
               {group.description && (
                 <p style={{
@@ -159,7 +167,7 @@ export default function GroupSelector({ brand, groups }) {
           </button>
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

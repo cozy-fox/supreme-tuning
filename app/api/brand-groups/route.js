@@ -29,12 +29,11 @@ export async function GET(request) {
 
     // Fetch groups from database
     const groups = await getGroups(brandIdNum);
-
     // Map groups to the expected format for the frontend
     const serializedGroups = groups.map(group => ({
       id: group.id,
       name: group.name,
-      displayName: group.isPerformance ? group.name : 'Standard',
+      displayName: group.displayName || group.name,
       description: group.description || '',
       tagline: group.tagline || null,
       color: group.color || null,

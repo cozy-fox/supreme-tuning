@@ -57,7 +57,7 @@ export default async function GroupSelectionPage({ params }) {
   const serializedGroups = groups.map(group => ({
     id: group.id,
     name: group.name,
-    displayName: group.isPerformance ? group.name : 'Standard',
+    displayName: group.displayName || group.name,
     description: group.description || '',
     tagline: group.tagline || null,
     color: group.color || null,

@@ -1,8 +1,8 @@
-import { getBrands, getModels, getGroups, brandHasGroups, getDefaultGroup } from '@/lib/data';
+import { getBrands, getModels, getGroups, brandHasGroups } from '@/lib/data';
 import { generateMetadata as generateSeoMetadata } from '@/lib/seo';
-import { notFound } from 'next/navigation';
-import BrandSelector from './BrandSelector';
+import { notFound, redirect } from 'next/navigation';
 import BrandHero from './BrandHero';
+import ModelSelector from '@/components/ModelSelector';
 
 // Generate static params for all brands (SSG)
 export async function generateStaticParams() {
@@ -29,39 +29,6 @@ export async function generateMetadata({ params }) {
   });
 }
 
-/**
- * Get brand groups configuration from database
- * Returns serialized groups for client component
- * hasGroups will be false if brand only has a Standard group (no selector shown)
- */
-async function getBrandGroupsForClient(brandId) {
-  const hasPerformanceGroups = await brandHasGroups(brandId);
-  const groups = await getGroups(brandId);
-
-  // If no performance groups, get the default group ID for auto-selection
-  let defaultGroupId = null;
-  if (!hasPerformanceGroups && groups.length > 0) {
-    defaultGroupId = groups[0].id;
-  }
-
-  // Serialize groups for client (already serialized from data.js, just format)
-  const serializedGroups = groups.map(group => ({
-    id: group.id,
-    name: group.name,
-    displayName: group.isPerformance ? group.name : 'Standard',
-    description: group.description || '',
-    logo: group.logo || null,
-    isPerformance: group.isPerformance || false,
-    order: group.order || 0,
-  }));
-
-  return {
-    hasGroups: hasPerformanceGroups, // Only true if performance groups exist
-    groups: serializedGroups,
-    defaultGroupId, // For auto-selecting when no performance groups
-  };
-}
-
 export default async function BrandPage({ params }) {
   const { brand: brandSlug } = await params;
   const brands = await getBrands();
@@ -73,8 +40,20 @@ export default async function BrandPage({ params }) {
     notFound();
   }
 
-  const models = await getModels(brand.id);
-  const brandGroups = await getBrandGroupsForClient(brand.id);
+  // Check if brand has performance groups
+  const hasPerformanceGroups = await brandHasGroups(brand.id);
+
+  // If brand has performance groups, redirect to group selection page
+  if (hasPerformanceGroups) {
+    redirect(`/${brandSlug}/group`);
+  }
+
+  // For brands without performance groups, show model selector directly
+  const groups = await getGroups(brand.id);
+  const defaultGroupId = groups.length > 0 ? groups[0].id : null;
+
+  // Fetch models for the default group
+  const models = await getModels(brand.id, defaultGroupId);
 
   return (
     <main className="container">
@@ -87,22 +66,9 @@ export default async function BrandPage({ params }) {
 
       {/* Hero */}
       <BrandHero brandName={brand.name} />
-      {/* <div className="hero-section" style={{ padding: '20px 0 15px' }}>
-        <h1>{brand.name} Chiptuning</h1>
-        <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', maxWidth: '600px', margin: '0 auto' }}>
-          {brandGroups.hasGroups
-            ? 'Selecteer eerst een categorie, dan uw model, generatie en motor'
-            : 'Selecteer uw model, generatie en motor om de tuning mogelijkheden te bekijken'
-          }
-        </p>
-      </div> */}
 
-      {/* Client-side selector component */}
-      <BrandSelector
-        brand={brand}
-        models={models}
-        brandGroups={brandGroups}
-      />
+      {/* Model Selector for brands without performance groups */}
+      <ModelSelector brand={brand} models={models} />
     </main>
   );
 }

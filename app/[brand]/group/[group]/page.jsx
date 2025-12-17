@@ -56,13 +56,13 @@ export default async function GroupModelSelectionPage({ params }) {
         <span> › </span>
         <a href={`/${brandSlug}/group`}>Groups</a>
         <span> › </span>
-        <span className="current">{group.name}</span>
+        <span className="current">{group.displayName}</span>
       </nav>
 
       {/* Hero Section with Group Info */}
       <div className="hero-section" style={{ padding: '20px 0 15px' }}>
         <h1 style={{ marginBottom: '12px' }}>
-          {brand.name} {group.name}
+          {brand.name} {group.displayName}
         </h1>
         <ClientTranslation
           translationKey="selectModelGeneration"

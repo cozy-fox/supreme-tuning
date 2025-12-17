@@ -60,7 +60,7 @@ export default async function BrandPage({ params }) {
       {/* Breadcrumb */}
       <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
         <a href="/">Home</a>
-        <span>›</span>
+        <span> › </span>
         <span className="current">{brand.name}</span>
       </nav>
 

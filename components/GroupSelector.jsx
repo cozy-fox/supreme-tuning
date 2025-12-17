@@ -31,6 +31,7 @@ export default function GroupSelector({ brand, groups }) {
 
   // Get the appropriate logo for each group
   const getGroupLogo = (group) => {
+
     const hasError = imgErrors[group.id];
 
     if (!hasError && group.logo) {

@@ -79,11 +79,11 @@ export default async function ResultsPage({ params }) {
           {/* Breadcrumb Navigation */}
           <nav className="breadcrumb">
             <a href="/">Home</a>
-            <span>›</span>
+            <span> › </span>
             <a href={`/${brand}`}>{brandName}</a>
-            <span>›</span>
+            <span> › </span>
             <span>{modelName}</span>
-            <span>›</span>
+            <span> › </span>
             <span className="current">{typeName}</span>
           </nav>
 

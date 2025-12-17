@@ -72,9 +72,9 @@ export default async function GroupSelectionPage({ params }) {
       {/* Breadcrumb */}
       <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
         <a href="/">Home</a>
-        <span>›</span>
+        <span> › </span>
         <a href={`/${brandSlug}`}>{brand.name}</a>
-        <span>›</span>
+        <span> › </span>
         <span className="current">Select Group</span>
       </nav>
 

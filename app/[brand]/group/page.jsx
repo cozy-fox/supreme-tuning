@@ -70,7 +70,7 @@ export default async function GroupSelectionPage({ params }) {
   return (
     <main className="container">
       {/* Breadcrumb */}
-      <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
+      <nav className="breadcrumb">
         <a href="/">Home</a>
         <span> › </span>
         <a href={`/${brandSlug}`}>{brand.name}</a>
@@ -79,13 +79,12 @@ export default async function GroupSelectionPage({ params }) {
       </nav>
 
       {/* Hero Section */}
-      <div className="hero-section" style={{ padding: '20px 0 15px' }}>
+      <div className="hero-section">
         <h1>{brand.name}</h1>
         <ClientTranslation
           translationKey="selectVariant"
           style={{
             color: 'var(--text-muted)',
-            fontSize: '1.1rem',
             maxWidth: '600px',
             margin: '0 auto',
             display: 'block'

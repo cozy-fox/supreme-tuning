@@ -24,34 +24,32 @@ export default function LanguageSelector() {
   return (
     <div
       ref={dropdownRef}
+      className="language-selector-wrapper"
       style={{
         position: 'fixed',
-        top: '30px',
-        right: '30px',
         zIndex: 1000,
       }}
-      className="language-selector-wrapper"
     >
       <button
         onClick={() => setLangDropdown(!langDropdown)}
-        className="btn-icon"
+        className="btn-icon language-selector-btn"
         style={{
           background: 'var(--chrome-gradient)',
           border: '1px solid var(--border)',
           borderRadius: '12px',
-          padding: '12px 16px',
+          padding: '10px 12px',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: '8px',
+          gap: '6px',
           transition: 'all 0.3s ease',
           color: 'var(--text-main)',
-          fontSize: '1rem',
+          fontSize: '0.9rem',
           boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
         }}
       >
-        <Globe size={20} color="var(--primary)" />
-        {langMounted && <span style={{ fontSize: '1.2rem' }}>{currentLang?.flag}</span>}
+        <Globe size={18} color="var(--primary)" />
+        {langMounted && <span style={{ fontSize: '1.1rem' }}>{currentLang?.flag}</span>}
       </button>
       {langDropdown && (
         <div style={{

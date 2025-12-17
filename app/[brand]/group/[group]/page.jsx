@@ -49,7 +49,7 @@ export default async function GroupModelSelectionPage({ params }) {
   return (
     <main className="container">
       {/* Breadcrumb */}
-      <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
+      <nav className="breadcrumb">
         <a href="/">Home</a>
         <span> › </span>
         <a href={`/${brandSlug}`}>{brand.name}</a>
@@ -60,7 +60,7 @@ export default async function GroupModelSelectionPage({ params }) {
       </nav>
 
       {/* Hero Section with Group Info */}
-      <div className="hero-section" style={{ padding: '20px 0 15px' }}>
+      <div className="hero-section">
         <h1 style={{ marginBottom: '12px' }}>
           {brand.name} {group.displayName}
         </h1>
@@ -68,7 +68,6 @@ export default async function GroupModelSelectionPage({ params }) {
           translationKey="selectModelGeneration"
           style={{
             color: 'var(--text-muted)',
-            fontSize: '1.1rem',
             maxWidth: '700px',
             margin: '0 auto',
             display: 'block'

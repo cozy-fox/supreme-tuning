@@ -230,7 +230,7 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
           </div>
 
           <div className="action-buttons">
-            <a href="tel:+31619828216" className="btn-contact">
+            <a href="https://wa.me/31619828216" target="_blank" rel="noopener noreferrer" className="btn-contact">
               <Phone size={18} />
               {t('contact')}
             </a>

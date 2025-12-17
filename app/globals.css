@@ -153,12 +153,12 @@ h3 {
   color: var(--primary);
 }
 
-/* Container - Mobile-first, no scroll, fill viewport */
+/* Container - Mobile-first, optimized padding for iframe */
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 12px 16px;
+  padding: 8px 12px;
   height: 100%;
   flex: 1;
   display: flex;
@@ -986,16 +986,49 @@ input::placeholder {
   }
 }
 
-/* Language Selector Responsive */
+/* Language Selector Responsive - Fixed positioning to prevent overlap */
 .language-selector-wrapper {
-  top: 10px;
+  top: 70px;
   right: 10px;
+}
+
+.language-selector-btn {
+  padding: 10px 12px !important;
+  gap: 6px !important;
+  font-size: 0.9rem !important;
+}
+
+.language-selector-btn svg {
+  width: 18px !important;
+  height: 18px !important;
 }
 
 @media (min-width: 768px) {
   .language-selector-wrapper {
-    top: 20px;
+    top: 80px;
     right: 20px;
+  }
+
+  .language-selector-btn {
+    padding: 12px 16px !important;
+    gap: 8px !important;
+    font-size: 1rem !important;
+  }
+
+  .language-selector-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .language-selector-wrapper {
+    top: 20px;
+    right: 30px;
+  }
+
+  .language-selector-btn {
+    padding: 12px 16px !important;
   }
 }
 
@@ -1027,7 +1060,7 @@ input::placeholder {
   pointer-events: none;
 }
 
-/* Mobile-first: single column, scrollable */
+/* Mobile-first: single column, scrollable with safe area */
 .stage-content {
   display: flex;
   flex-direction: column;
@@ -1036,7 +1069,9 @@ input::placeholder {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 .stage-description {
@@ -1207,9 +1242,10 @@ input::placeholder {
   }
 }
 
-/* Stage Stats - Mobile-first */
+/* Stage Stats - Mobile-first with extra bottom padding for scrolling */
 .stage-stats {
   padding: 14px;
+  padding-bottom: 24px;
   background: rgba(70, 75, 80, 0.3);
   flex-shrink: 0;
 }
@@ -1217,12 +1253,14 @@ input::placeholder {
 @media (min-width: 768px) {
   .stage-stats {
     padding: 28px;
+    padding-bottom: 32px;
   }
 }
 
 @media (min-width: 1024px) {
   .stage-stats {
     padding: 36px;
+    padding-bottom: 40px;
   }
 }
 
@@ -1542,12 +1580,12 @@ input::placeholder {
   }
 }
 
-/* Modern BrandSelector Styles - Mobile-first */
+/* Modern BrandSelector Styles - Mobile-first with optimized padding */
 .selector-container {
   background: var(--chrome-gradient);
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 14px;
+  padding: 12px;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
@@ -1857,16 +1895,18 @@ input::placeholder {
   }
 }
 
-/* Breadcrumb mobile */
+/* Breadcrumb mobile - with proper top spacing */
 .breadcrumb {
   font-size: 0.7rem;
   padding: 8px 0;
+  margin-top: 12px;
 }
 
 @media (min-width: 768px) {
   .breadcrumb {
     font-size: 0.85rem;
     padding: 16px 0;
+    margin-top: 16px;
   }
 }
 
@@ -1874,6 +1914,7 @@ input::placeholder {
   .breadcrumb {
     font-size: 1rem;
     padding: 20px 0;
+    margin-top: 0;
   }
 }
 
@@ -2019,5 +2060,137 @@ input::placeholder {
     font-size: 1rem;
     letter-spacing: 2px;
     border-radius: 14px;
+  }
+}
+
+/* ================================
+   Group Cards Grid Responsive
+   ================================ */
+
+/* Mobile: 2 columns */
+.group-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.group-card-btn {
+  padding: 24px 16px;
+  min-height: 200px;
+}
+
+.group-logo-container {
+  max-width: 120px;
+  height: 80px;
+  padding: 12px;
+}
+
+.group-card-title {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.group-card-description {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+/* Tablet: 2 columns with more space */
+@media (min-width: 768px) {
+  .group-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .group-card-btn {
+    padding: 40px 24px;
+    min-height: 280px;
+  }
+
+  .group-logo-container {
+    max-width: 180px;
+    height: 120px;
+    padding: 16px;
+  }
+
+  .group-card-title {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .group-card-description {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+}
+
+/* Desktop: auto-fit with larger cards */
+@media (min-width: 1024px) {
+  .group-cards-grid {
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+  }
+
+  .group-card-btn {
+    padding: 60px 40px;
+    min-height: 400px;
+  }
+
+  .group-logo-container {
+    max-width: 280px;
+    height: 160px;
+    padding: 20px;
+  }
+
+  .group-card-title {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+
+  .group-card-description {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
+
+/* ================================
+   Mobile-specific iframe optimizations
+   ================================ */
+
+/* Ensure proper touch scrolling on mobile */
+@media (max-width: 767px) {
+  body {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Reduce all vertical spacing on mobile for better space usage */
+  .hero-section {
+    padding: 8px 0 6px;
+  }
+
+  .selector-container {
+    margin-top: 16px;
+  }
+
+  /* Optimize stage section for mobile scrolling */
+  .stage-section {
+    margin-bottom: 16px;
+  }
+
+  /* Ensure action buttons are always visible */
+  .action-buttons {
+    margin-top: 12px;
+    padding-bottom: 8px;
+  }
+
+  /* Compact price display on mobile */
+  .price-box {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Reduce power stat spacing */
+  .power-stat {
+    margin-bottom: 12px;
   }
 }

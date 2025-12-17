@@ -78,13 +78,14 @@ export default function GroupSelector({ brand, groups }) {
     //   padding: '0 20px'
     // }}>
     <>
-      {/* Group Cards Grid */}
+      {/* Group Cards Grid - Mobile-first responsive */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '40px',
+        gridTemplateColumns: 'repeat(2, 1fr)',
+        gap: '12px',
         padding: '20px 0'
-      }}>
+      }}
+      className="group-cards-grid">
         {sortedGroups.map((group) => (
           <button
             key={group.id}
@@ -92,8 +93,8 @@ export default function GroupSelector({ brand, groups }) {
             style={{
               background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
               border: '2px solid var(--border)',
-              borderRadius: '16px',
-              padding: '60px 40px',
+              borderRadius: '12px',
+              padding: '24px 16px',
               cursor: 'pointer',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               position: 'relative',
@@ -101,9 +102,10 @@ export default function GroupSelector({ brand, groups }) {
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              gap: '30px',
-              minHeight: '400px'
+              gap: '16px',
+              minHeight: '200px'
             }}
+            className="group-card-btn"
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-8px)';
               e.currentTarget.style.borderColor = 'var(--primary)';
@@ -118,16 +120,17 @@ export default function GroupSelector({ brand, groups }) {
             {/* Logo */}
             <div style={{
               width: '100%',
-              maxWidth: '280px',
-              height: '160px',
+              maxWidth: '120px',
+              height: '80px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               background: 'rgba(0, 0, 0, 0.2)',
-              borderRadius: '12px',
-              padding: '20px',
+              borderRadius: '8px',
+              padding: '12px',
               overflow: 'hidden'
-            }}>
+            }}
+            className="group-logo-container">
               {getGroupLogo(group)}
             </div>
 
@@ -136,21 +139,23 @@ export default function GroupSelector({ brand, groups }) {
               textAlign: 'center'
             }}>
               <h2 style={{
-                fontSize: '2rem',
+                fontSize: '1.1rem',
                 fontWeight: '600',
                 color: 'var(--text-main)',
-                marginBottom: '12px',
+                marginBottom: '6px',
                 letterSpacing: '0.5px'
-              }}>
+              }}
+              className="group-card-title">
                 {group.displayName }
               </h2>
               {group.description && (
                 <p style={{
-                  fontSize: '1rem',
+                  fontSize: '0.75rem',
                   color: 'var(--text-muted)',
-                  lineHeight: '1.6',
+                  lineHeight: '1.4',
                   fontWeight: '300'
-                }}>
+                }}
+                className="group-card-description">
                   {group.description}
                 </p>
               )}

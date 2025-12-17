@@ -58,7 +58,7 @@ export default async function BrandPage({ params }) {
   return (
     <main className="container">
       {/* Breadcrumb */}
-      <nav className="breadcrumb" style={{ paddingTop: '10px' }}>
+      <nav className="breadcrumb">
         <a href="/">Home</a>
         <span> › </span>
         <span className="current">{brand.name}</span>

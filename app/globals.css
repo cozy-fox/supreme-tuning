@@ -728,9 +728,9 @@ header .btn-secondary {
 /* Grid for brands - Mobile-first */
 .grid-brands {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-top: 50px;
+  margin-top: 70px;
   flex: 1;
   align-content: start;
   overflow-y: auto;
@@ -742,7 +742,7 @@ header .btn-secondary {
 @media (min-width: 480px) {
   .grid-brands {
     padding: 30px;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 

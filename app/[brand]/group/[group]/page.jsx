@@ -4,6 +4,10 @@ import { notFound } from 'next/navigation';
 import ModelSelector from '@/components/ModelSelector';
 import ClientTranslation from '@/components/ClientTranslation';
 
+// Use dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // SEO Metadata
 export async function generateMetadata({ params }) {
   const { brand: brandSlug, group: groupId } = await params;

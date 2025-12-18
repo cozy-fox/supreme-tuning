@@ -4,6 +4,10 @@ import { notFound, redirect } from 'next/navigation';
 import GroupSelector from '@/components/GroupSelector';
 import ClientTranslation from '@/components/ClientTranslation';
 
+// Use dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Generate static params for all brands (SSG)
 export async function generateStaticParams() {
   const brands = await getBrands();
@@ -42,16 +46,16 @@ export default async function GroupSelectionPage({ params }) {
     notFound();
   }
 
-  // Check if brand has groups
-  const hasPerformanceGroups = await brandHasGroups(brand.id);
+  // Fetch groups first (single DB call instead of two)
+  const groups = await getGroups(brand.id);
+
+  // Check if brand has groups based on fetched data
+  const hasPerformanceGroups = groups.length > 1 || (groups.length === 1 && groups[0].isPerformance);
 
   // If no performance groups, redirect back to brand page
   if (!hasPerformanceGroups) {
     redirect(`/${brandSlug}`);
   }
-
-  // Fetch groups
-  const groups = await getGroups(brand.id);
 
   // Serialize groups for client component
   const serializedGroups = groups.map(group => ({

@@ -3,6 +3,10 @@ import { generateMetadata as generateSeoMetadata, generateVehicleSchema, generat
 import { notFound } from 'next/navigation';
 import ResultsClient from './ResultsClient';
 
+// Use dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Dynamic metadata for SEO - this is crucial for search engines
 export async function generateMetadata({ params }) {
   const { brand, model, type, engine } = await params;

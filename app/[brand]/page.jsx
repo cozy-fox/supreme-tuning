@@ -4,6 +4,10 @@ import { notFound, redirect } from 'next/navigation';
 import BrandHero from './BrandHero';
 import ModelSelector from '@/components/ModelSelector';
 
+// Use dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // Generate static params for all brands (SSG)
 export async function generateStaticParams() {
   const brands = await getBrands();
@@ -40,8 +44,11 @@ export default async function BrandPage({ params }) {
     notFound();
   }
 
-  // Check if brand has performance groups
-  const hasPerformanceGroups = await brandHasGroups(brand.id);
+  // Fetch groups first (single DB call)
+  const groups = await getGroups(brand.id);
+
+  // Check if brand has performance groups based on fetched data
+  const hasPerformanceGroups = groups.length > 1 || (groups.length === 1 && groups[0].isPerformance);
 
   // If brand has performance groups, redirect to group selection page
   if (hasPerformanceGroups) {
@@ -49,7 +56,6 @@ export default async function BrandPage({ params }) {
   }
 
   // For brands without performance groups, show model selector directly
-  const groups = await getGroups(brand.id);
   const defaultGroupId = groups.length > 0 ? groups[0].id : null;
 
   // Fetch models for the default group

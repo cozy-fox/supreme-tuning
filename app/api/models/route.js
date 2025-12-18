@@ -1,6 +1,10 @@
 import { getModels } from '@/lib/data';
 import { NextResponse } from 'next/server';
 
+// Disable caching for this API route to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * GET /api/models?brandId=1&groupId=2
  * Returns models filtered by brandId and optionally by groupId
@@ -21,7 +25,13 @@ export async function GET(request) {
     // If only brandId is provided, it returns all models for the brand
     const models = await getModels(brandId, groupId);
 
-    return NextResponse.json(models);
+    return NextResponse.json(models, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    });
   } catch (error) {
     console.error('Error fetching models:', error);
     return NextResponse.json({ error: 'Failed to fetch models' }, { status: 500 });

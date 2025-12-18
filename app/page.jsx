@@ -2,6 +2,10 @@ import { getBrands } from '@/lib/data';
 import BrandCard from '@/components/BrandCard';
 import HeroSection from '@/components/HeroSection';
 
+// Use dynamic rendering to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export const metadata = {
   title: 'Chiptuning Calculator | Supreme Tuning',
   description: 'Bereken direct hoeveel vermogen uw auto kan winnen met professionele chiptuning. Selecteer uw merk en ontdek de mogelijkheden.',

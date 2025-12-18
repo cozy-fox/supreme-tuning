@@ -1,12 +1,22 @@
 import { getTypes } from '@/lib/data';
 import { NextResponse } from 'next/server';
 
+// Disable caching for this API route to always fetch fresh data from MongoDB
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const modelId = searchParams.get('modelId');
     const types = await getTypes(modelId);
-    return NextResponse.json(types);
+    return NextResponse.json(types, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate, max-age=0',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+      }
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch types' }, { status: 500 });
   }

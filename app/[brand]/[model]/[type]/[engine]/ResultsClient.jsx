@@ -234,7 +234,7 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
               <Phone size={18} />
               {t('contact')}
             </a>
-            <a href="#" className="btn-shop">
+            <a href="https://supremetuning.nl/offerte-aanvragen/" className="btn-shop">
               <ShoppingBag size={18} />
               {t('shop')}
             </a>

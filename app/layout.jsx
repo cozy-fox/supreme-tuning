@@ -1,7 +1,6 @@
 import './globals.css';
 import { LanguageProvider } from '@/components/LanguageContext';
 import IframeHeightSync from '@/components/IframeHeightSync';
-import LanguageSelector from '@/components/LanguageSelector';
 import Header from '@/components/Header';
 
 export const metadata = {
@@ -68,7 +67,6 @@ export default function RootLayout({ children }) {
         <LanguageProvider>
           <IframeHeightSync />
           <Header />
-          <LanguageSelector />
           <div id="root">
             {children}
           </div>

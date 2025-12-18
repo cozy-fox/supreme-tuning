@@ -228,25 +228,90 @@ a {
   text-decoration: none;
 }
 
-/* Header - Minimal spacer for language selector */
+/* Header - Minimal with language selector */
 .app-header,
 header {
   flex-shrink: 0;
   position: relative;
-  z-index: 50;
-  height: 0;
-  min-height: 0;
+  z-index: 100;
+  background: transparent;
+  padding: 12px 0;
 }
 
 .header-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 10px 12px;
+  padding: 0 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
-  z-index: 1;
+}
+
+.header-language-selector {
+  position: relative;
+}
+
+.header-language-selector .language-selector-btn {
+  background: var(--chrome-gradient);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  color: var(--text-main);
+  font-size: 0.85rem;
+}
+
+.header-language-selector .language-selector-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.header-language-selector .language-selector-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.header-language-selector .language-selector-btn span {
+  font-size: 1rem;
+}
+
+.language-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg-card-solid);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  min-width: 160px;
+  box-shadow: var(--shadow);
+  z-index: 1000;
+}
+
+.language-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: transparent;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  text-align: left;
+}
+
+.language-option:hover,
+.language-option.active {
+  background: var(--bg-hover);
 }
 
 .header-logo-link {
@@ -359,8 +424,27 @@ header .btn-secondary {
 
 /* Header - Tablet and up */
 @media (min-width: 768px) {
+  .app-header {
+    padding: 16px 0;
+  }
+
   .header-container {
-    padding: 12px 30px;
+    padding: 0 30px;
+  }
+
+  .header-language-selector .language-selector-btn {
+    padding: 10px 14px;
+    gap: 7px;
+    font-size: 0.95rem;
+  }
+
+  .header-language-selector .language-selector-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .header-language-selector .language-selector-btn span {
+    font-size: 1.1rem;
   }
 
   .header-logo-link {
@@ -422,8 +506,28 @@ header .btn-secondary {
 
 /* Header - Desktop */
 @media (min-width: 1024px) {
+  .app-header {
+    padding: 20px 0;
+  }
+
   .header-container {
-    padding: 14px 40px;
+    padding: 0 40px;
+  }
+
+  .header-language-selector .language-selector-btn {
+    padding: 12px 16px;
+    gap: 8px;
+    font-size: 1rem;
+    border-radius: 10px;
+  }
+
+  .header-language-selector .language-selector-btn svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .header-language-selector .language-selector-btn span {
+    font-size: 1.2rem;
   }
 
   .header-logo-link {

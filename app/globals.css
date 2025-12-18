@@ -2310,6 +2310,7 @@ input::placeholder {
   font-size: 0.7rem;
   padding: 8px 0;
   margin-top: 12px;
+  margin-left: 20px;
 }
 
 @media (min-width: 768px) {
@@ -2480,7 +2481,7 @@ input::placeholder {
 /* Mobile: 2 columns */
 .group-cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 40px;
   padding: 20px 30px;
   margin-top: 90px;
@@ -2612,9 +2613,8 @@ input::placeholder {
   }
 
   .selector-container {
-    margin-top: 90px;
+    margin-top: 90px 10px;
     padding: 60px 10px;
-    margin: 0px 10px;
   }
 
   /* Optimize stage section for mobile scrolling */

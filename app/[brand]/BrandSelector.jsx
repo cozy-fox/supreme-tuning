@@ -125,7 +125,7 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
   }, [canSearch, brand, selModel, selType, selEngine, router]);
 
   return (
-    <div className="selector-container animate-in" style={{ marginTop: '32px' }}>
+    <div className="selector-container animate-in">
       {/* Group Selection for brands with performance divisions */}
       {hasGroups && (
         <div className="group-selector-row" style={{ marginBottom: '24px' }}>

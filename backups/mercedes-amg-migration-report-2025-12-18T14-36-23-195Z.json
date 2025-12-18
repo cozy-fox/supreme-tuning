@@ -1,0 +1,972 @@
+{
+  "timestamp": "2025-12-18T14:31:32.826Z",
+  "dryRun": false,
+  "backupPath": "F:\\work\\supreme-tuning\\backups\\mercedes-amg-migration-backup-2025-12-18T14-31-14-654Z.json",
+  "amgGroupId": 6,
+  "totalEngines": 120,
+  "modelsCreated": 21,
+  "typesCreated": 53,
+  "enginesMigrated": 120,
+  "changes": [
+    {
+      "engineId": 1389,
+      "engineName": "35 AMG",
+      "oldTypeId": 184,
+      "newTypeId": 458,
+      "oldModelId": 80,
+      "newModelId": 202
+    },
+    {
+      "engineId": 1390,
+      "engineName": "45 AMG",
+      "oldTypeId": 184,
+      "newTypeId": 458,
+      "oldModelId": 80,
+      "newModelId": 202
+    },
+    {
+      "engineId": 1391,
+      "engineName": "45 AMG-S",
+      "oldTypeId": 184,
+      "newTypeId": 458,
+      "oldModelId": 80,
+      "newModelId": 202
+    },
+    {
+      "engineId": 1404,
+      "engineName": "45 AMG",
+      "oldTypeId": 185,
+      "newTypeId": 459,
+      "oldModelId": 80,
+      "newModelId": 202
+    },
+    {
+      "engineId": 1417,
+      "engineName": "45 AMG",
+      "oldTypeId": 186,
+      "newTypeId": 460,
+      "oldModelId": 80,
+      "newModelId": 202
+    },
+    {
+      "engineId": 1428,
+      "engineName": "43 AMG",
+      "oldTypeId": 190,
+      "newTypeId": 190,
+      "oldModelId": 81,
+      "newModelId": 81
+    },
+    {
+      "engineId": 1429,
+      "engineName": "53 AMG",
+      "oldTypeId": 190,
+      "newTypeId": 190,
+      "oldModelId": 81,
+      "newModelId": 81
+    },
+    {
+      "engineId": 1430,
+      "engineName": "63 AMG",
+      "oldTypeId": 190,
+      "newTypeId": 190,
+      "oldModelId": 81,
+      "newModelId": 81
+    },
+    {
+      "engineId": 1431,
+      "engineName": "63 S AMG",
+      "oldTypeId": 190,
+      "newTypeId": 190,
+      "oldModelId": 81,
+      "newModelId": 81
+    },
+    {
+      "engineId": 1432,
+      "engineName": "AMG GT",
+      "oldTypeId": 191,
+      "newTypeId": 191,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1433,
+      "engineName": "AMG GTC",
+      "oldTypeId": 191,
+      "newTypeId": 191,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1434,
+      "engineName": "AMG GTR",
+      "oldTypeId": 191,
+      "newTypeId": 191,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1435,
+      "engineName": "AMG GTS",
+      "oldTypeId": 191,
+      "newTypeId": 191,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1436,
+      "engineName": "AMG GT",
+      "oldTypeId": 192,
+      "newTypeId": 192,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1437,
+      "engineName": "AMG GT S",
+      "oldTypeId": 192,
+      "newTypeId": 192,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1438,
+      "engineName": "AMG GTC",
+      "oldTypeId": 192,
+      "newTypeId": 192,
+      "oldModelId": 82,
+      "newModelId": 82
+    },
+    {
+      "engineId": 1472,
+      "engineName": "C 43 AMG",
+      "oldTypeId": 197,
+      "newTypeId": 461,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1473,
+      "engineName": "C 63 AMG",
+      "oldTypeId": 197,
+      "newTypeId": 461,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1474,
+      "engineName": "C 63 AMG S",
+      "oldTypeId": 197,
+      "newTypeId": 461,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1475,
+      "engineName": "C 63 AMG S (GPF)",
+      "oldTypeId": 197,
+      "newTypeId": 461,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1492,
+      "engineName": "C 43 AMG",
+      "oldTypeId": 198,
+      "newTypeId": 462,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1493,
+      "engineName": "C 450 AMG",
+      "oldTypeId": 198,
+      "newTypeId": 462,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1494,
+      "engineName": "C 63 AMG 4.0",
+      "oldTypeId": 198,
+      "newTypeId": 462,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1495,
+      "engineName": "C 63 AMG S 4.0",
+      "oldTypeId": 198,
+      "newTypeId": 462,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1512,
+      "engineName": "C 63 AMG",
+      "oldTypeId": 199,
+      "newTypeId": 463,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1513,
+      "engineName": "C 63 AMG (2011)",
+      "oldTypeId": 199,
+      "newTypeId": 463,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1514,
+      "engineName": "C 63 AMG 507 Series",
+      "oldTypeId": 199,
+      "newTypeId": 463,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1515,
+      "engineName": "C 63 AMG Black series",
+      "oldTypeId": 199,
+      "newTypeId": 463,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1516,
+      "engineName": "C 63 AMG ppp",
+      "oldTypeId": 199,
+      "newTypeId": 463,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1529,
+      "engineName": "C 63 AMG",
+      "oldTypeId": 200,
+      "newTypeId": 464,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1530,
+      "engineName": "C 63 AMG PPP",
+      "oldTypeId": 200,
+      "newTypeId": 464,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1540,
+      "engineName": "C 55 AMG",
+      "oldTypeId": 201,
+      "newTypeId": 465,
+      "oldModelId": 84,
+      "newModelId": 203
+    },
+    {
+      "engineId": 1551,
+      "engineName": "CL 63 AMG",
+      "oldTypeId": 204,
+      "newTypeId": 466,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1552,
+      "engineName": "CL 63 AMG PPK",
+      "oldTypeId": 204,
+      "newTypeId": 466,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1553,
+      "engineName": "CL 65 AMG",
+      "oldTypeId": 204,
+      "newTypeId": 466,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1556,
+      "engineName": "63 AMG",
+      "oldTypeId": 205,
+      "newTypeId": 467,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1557,
+      "engineName": "65 AMG",
+      "oldTypeId": 205,
+      "newTypeId": 467,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1559,
+      "engineName": "55 AMG",
+      "oldTypeId": 206,
+      "newTypeId": 468,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1561,
+      "engineName": "65 AMG",
+      "oldTypeId": 206,
+      "newTypeId": 468,
+      "oldModelId": 86,
+      "newModelId": 204
+    },
+    {
+      "engineId": 1571,
+      "engineName": "35 AMG",
+      "oldTypeId": 207,
+      "newTypeId": 469,
+      "oldModelId": 87,
+      "newModelId": 205
+    },
+    {
+      "engineId": 1572,
+      "engineName": "45 AMG",
+      "oldTypeId": 207,
+      "newTypeId": 469,
+      "oldModelId": 87,
+      "newModelId": 205
+    },
+    {
+      "engineId": 1573,
+      "engineName": "45 AMG-S",
+      "oldTypeId": 207,
+      "newTypeId": 469,
+      "oldModelId": 87,
+      "newModelId": 205
+    },
+    {
+      "engineId": 1583,
+      "engineName": "45 AMG",
+      "oldTypeId": 208,
+      "newTypeId": 470,
+      "oldModelId": 87,
+      "newModelId": 205
+    },
+    {
+      "engineId": 1593,
+      "engineName": "45 AMG",
+      "oldTypeId": 209,
+      "newTypeId": 471,
+      "oldModelId": 87,
+      "newModelId": 205
+    },
+    {
+      "engineId": 1600,
+      "engineName": "53 AMG",
+      "oldTypeId": 211,
+      "newTypeId": 472,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1606,
+      "engineName": "53 AMG",
+      "oldTypeId": 212,
+      "newTypeId": 473,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1610,
+      "engineName": "63 AMG",
+      "oldTypeId": 213,
+      "newTypeId": 474,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1611,
+      "engineName": "63 AMG S",
+      "oldTypeId": 213,
+      "newTypeId": 474,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1617,
+      "engineName": "CLS 63 AMG",
+      "oldTypeId": 214,
+      "newTypeId": 475,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1618,
+      "engineName": "CLS 63 AMG PPK",
+      "oldTypeId": 214,
+      "newTypeId": 475,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1627,
+      "engineName": "CLS 55 AMG",
+      "oldTypeId": 215,
+      "newTypeId": 476,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1628,
+      "engineName": "CLS 63 AMG",
+      "oldTypeId": 215,
+      "newTypeId": 476,
+      "oldModelId": 89,
+      "newModelId": 206
+    },
+    {
+      "engineId": 1633,
+      "engineName": "53 AMG",
+      "oldTypeId": 216,
+      "newTypeId": 477,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1634,
+      "engineName": "63 AMG S - 4.0 V8 Bi-turbo",
+      "oldTypeId": 216,
+      "newTypeId": 477,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1650,
+      "engineName": "43 AMG",
+      "oldTypeId": 217,
+      "newTypeId": 478,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1652,
+      "engineName": "53 AMG",
+      "oldTypeId": 217,
+      "newTypeId": 478,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1653,
+      "engineName": "63 AMG - 4.0 Bi-turbo",
+      "oldTypeId": 217,
+      "newTypeId": 478,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1654,
+      "engineName": "63 AMG S - 4.0 Bi-turbo",
+      "oldTypeId": 217,
+      "newTypeId": 478,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1669,
+      "engineName": "E 63 AMG S",
+      "oldTypeId": 218,
+      "newTypeId": 479,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1670,
+      "engineName": "E63 AMG",
+      "oldTypeId": 218,
+      "newTypeId": 479,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1685,
+      "engineName": "63 AMG",
+      "oldTypeId": 219,
+      "newTypeId": 480,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1686,
+      "engineName": "63 AMG Bi-Turbo",
+      "oldTypeId": 219,
+      "newTypeId": 480,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1687,
+      "engineName": "63 AMG PPK",
+      "oldTypeId": 219,
+      "newTypeId": 480,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1696,
+      "engineName": "E 63 AMG",
+      "oldTypeId": 220,
+      "newTypeId": 481,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1711,
+      "engineName": "E 55 AMG",
+      "oldTypeId": 221,
+      "newTypeId": 482,
+      "oldModelId": 90,
+      "newModelId": 207
+    },
+    {
+      "engineId": 1715,
+      "engineName": "63 AMG (4.0)",
+      "oldTypeId": 222,
+      "newTypeId": 483,
+      "oldModelId": 91,
+      "newModelId": 208
+    },
+    {
+      "engineId": 1722,
+      "engineName": "G 32 AMG",
+      "oldTypeId": 223,
+      "newTypeId": 484,
+      "oldModelId": 91,
+      "newModelId": 208
+    },
+    {
+      "engineId": 1723,
+      "engineName": "G 55 AMG",
+      "oldTypeId": 223,
+      "newTypeId": 484,
+      "oldModelId": 91,
+      "newModelId": 208
+    },
+    {
+      "engineId": 1724,
+      "engineName": "G 55 AMG",
+      "oldTypeId": 223,
+      "newTypeId": 484,
+      "oldModelId": 91,
+      "newModelId": 208
+    },
+    {
+      "engineId": 1725,
+      "engineName": "G 63 AMG",
+      "oldTypeId": 223,
+      "newTypeId": 484,
+      "oldModelId": 91,
+      "newModelId": 208
+    },
+    {
+      "engineId": 1726,
+      "engineName": "G 65 AMG",
+      "oldTypeId": 223,
+      "newTypeId": 484,
+      "oldModelId": 91,
+      "newModelId": 208
+    },
+    {
+      "engineId": 1733,
+      "engineName": "GL 63 AMG",
+      "oldTypeId": 224,
+      "newTypeId": 485,
+      "oldModelId": 92,
+      "newModelId": 209
+    },
+    {
+      "engineId": 1749,
+      "engineName": "35 AMG",
+      "oldTypeId": 226,
+      "newTypeId": 486,
+      "oldModelId": 93,
+      "newModelId": 210
+    },
+    {
+      "engineId": 1750,
+      "engineName": "45 AMG",
+      "oldTypeId": 226,
+      "newTypeId": 486,
+      "oldModelId": 93,
+      "newModelId": 210
+    },
+    {
+      "engineId": 1751,
+      "engineName": "45 AMG-S",
+      "oldTypeId": 226,
+      "newTypeId": 486,
+      "oldModelId": 93,
+      "newModelId": 210
+    },
+    {
+      "engineId": 1759,
+      "engineName": "45 AMG",
+      "oldTypeId": 227,
+      "newTypeId": 487,
+      "oldModelId": 93,
+      "newModelId": 210
+    },
+    {
+      "engineId": 1768,
+      "engineName": "GLA 45 AMG",
+      "oldTypeId": 228,
+      "newTypeId": 488,
+      "oldModelId": 93,
+      "newModelId": 210
+    },
+    {
+      "engineId": 1769,
+      "engineName": "GLA 45 AMG",
+      "oldTypeId": 228,
+      "newTypeId": 488,
+      "oldModelId": 93,
+      "newModelId": 210
+    },
+    {
+      "engineId": 1775,
+      "engineName": "35 AMG",
+      "oldTypeId": 229,
+      "newTypeId": 489,
+      "oldModelId": 94,
+      "newModelId": 211
+    },
+    {
+      "engineId": 1776,
+      "engineName": "45 AMG",
+      "oldTypeId": 229,
+      "newTypeId": 489,
+      "oldModelId": 94,
+      "newModelId": 211
+    },
+    {
+      "engineId": 1777,
+      "engineName": "45 AMG-S",
+      "oldTypeId": 229,
+      "newTypeId": 489,
+      "oldModelId": 94,
+      "newModelId": 211
+    },
+    {
+      "engineId": 1784,
+      "engineName": "43 AMG",
+      "oldTypeId": 230,
+      "newTypeId": 490,
+      "oldModelId": 95,
+      "newModelId": 212
+    },
+    {
+      "engineId": 1785,
+      "engineName": "63 AMG (4.0)",
+      "oldTypeId": 230,
+      "newTypeId": 490,
+      "oldModelId": 95,
+      "newModelId": 212
+    },
+    {
+      "engineId": 1786,
+      "engineName": "63 AMG -S (4.0)",
+      "oldTypeId": 230,
+      "newTypeId": 490,
+      "oldModelId": 95,
+      "newModelId": 212
+    },
+    {
+      "engineId": 1794,
+      "engineName": "43 AMG",
+      "oldTypeId": 231,
+      "newTypeId": 491,
+      "oldModelId": 95,
+      "newModelId": 212
+    },
+    {
+      "engineId": 1795,
+      "engineName": "63 AMG",
+      "oldTypeId": 231,
+      "newTypeId": 491,
+      "oldModelId": 95,
+      "newModelId": 212
+    },
+    {
+      "engineId": 1796,
+      "engineName": "63 AMG S",
+      "oldTypeId": 231,
+      "newTypeId": 491,
+      "oldModelId": 95,
+      "newModelId": 212
+    },
+    {
+      "engineId": 1805,
+      "engineName": "53 AMG",
+      "oldTypeId": 233,
+      "newTypeId": 492,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1807,
+      "engineName": "63 AMG",
+      "oldTypeId": 233,
+      "newTypeId": 492,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1808,
+      "engineName": "63 AMG S",
+      "oldTypeId": 233,
+      "newTypeId": 492,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1813,
+      "engineName": "43 AMG",
+      "oldTypeId": 234,
+      "newTypeId": 493,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1814,
+      "engineName": "43 AMG",
+      "oldTypeId": 234,
+      "newTypeId": 493,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1816,
+      "engineName": "63 AMG",
+      "oldTypeId": 234,
+      "newTypeId": 493,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1817,
+      "engineName": "63 AMG S",
+      "oldTypeId": 234,
+      "newTypeId": 493,
+      "oldModelId": 96,
+      "newModelId": 213
+    },
+    {
+      "engineId": 1839,
+      "engineName": "63 AMG",
+      "oldTypeId": 237,
+      "newTypeId": 494,
+      "oldModelId": 98,
+      "newModelId": 214
+    },
+    {
+      "engineId": 1844,
+      "engineName": "63 AMG",
+      "oldTypeId": 238,
+      "newTypeId": 495,
+      "oldModelId": 98,
+      "newModelId": 214
+    },
+    {
+      "engineId": 1851,
+      "engineName": "ML 63 AMG",
+      "oldTypeId": 240,
+      "newTypeId": 496,
+      "oldModelId": 100,
+      "newModelId": 215
+    },
+    {
+      "engineId": 1852,
+      "engineName": "ML 63 AMG",
+      "oldTypeId": 240,
+      "newTypeId": 496,
+      "oldModelId": 100,
+      "newModelId": 215
+    },
+    {
+      "engineId": 1862,
+      "engineName": "63 AMG",
+      "oldTypeId": 242,
+      "newTypeId": 497,
+      "oldModelId": 100,
+      "newModelId": 215
+    },
+    {
+      "engineId": 1872,
+      "engineName": "R 63 AMG",
+      "oldTypeId": 243,
+      "newTypeId": 498,
+      "oldModelId": 101,
+      "newModelId": 216
+    },
+    {
+      "engineId": 1881,
+      "engineName": "63 AMG",
+      "oldTypeId": 245,
+      "newTypeId": 499,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1882,
+      "engineName": "65 AMG",
+      "oldTypeId": 245,
+      "newTypeId": 499,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1888,
+      "engineName": "63 AMG",
+      "oldTypeId": 246,
+      "newTypeId": 500,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1889,
+      "engineName": "63 AMG",
+      "oldTypeId": 246,
+      "newTypeId": 500,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1890,
+      "engineName": "65 AMG",
+      "oldTypeId": 246,
+      "newTypeId": 500,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1903,
+      "engineName": "S 63 AMG",
+      "oldTypeId": 247,
+      "newTypeId": 501,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1904,
+      "engineName": "S 63 AMG",
+      "oldTypeId": 247,
+      "newTypeId": 501,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1905,
+      "engineName": "S 65 AMG",
+      "oldTypeId": 247,
+      "newTypeId": 501,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1909,
+      "engineName": "55 AMG",
+      "oldTypeId": 248,
+      "newTypeId": 502,
+      "oldModelId": 102,
+      "newModelId": 217
+    },
+    {
+      "engineId": 1913,
+      "engineName": "63 AMG",
+      "oldTypeId": 249,
+      "newTypeId": 503,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1914,
+      "engineName": "65 AMG",
+      "oldTypeId": 249,
+      "newTypeId": 503,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1917,
+      "engineName": "SL 63 AMG",
+      "oldTypeId": 250,
+      "newTypeId": 504,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1920,
+      "engineName": "55 AMG",
+      "oldTypeId": 251,
+      "newTypeId": 505,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1921,
+      "engineName": "55 AMG",
+      "oldTypeId": 251,
+      "newTypeId": 505,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1922,
+      "engineName": "55 AMG",
+      "oldTypeId": 251,
+      "newTypeId": 505,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1925,
+      "engineName": "63 AMG",
+      "oldTypeId": 251,
+      "newTypeId": 505,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1926,
+      "engineName": "65 AMG",
+      "oldTypeId": 251,
+      "newTypeId": 505,
+      "oldModelId": 103,
+      "newModelId": 218
+    },
+    {
+      "engineId": 1931,
+      "engineName": "43 AMG",
+      "oldTypeId": 252,
+      "newTypeId": 506,
+      "oldModelId": 104,
+      "newModelId": 219
+    },
+    {
+      "engineId": 1932,
+      "engineName": "43 AMG",
+      "oldTypeId": 252,
+      "newTypeId": 506,
+      "oldModelId": 104,
+      "newModelId": 219
+    },
+    {
+      "engineId": 1937,
+      "engineName": "SLK 55 AMG",
+      "oldTypeId": 253,
+      "newTypeId": 507,
+      "oldModelId": 105,
+      "newModelId": 220
+    }
+  ]
+}

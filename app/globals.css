@@ -1803,6 +1803,7 @@ input::placeholder {
 
   .bar-track {
     height: 34px;
+    margin-left: 20px;
   }
 
   .bar-fill {

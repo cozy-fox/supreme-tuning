@@ -1760,7 +1760,7 @@ input::placeholder {
   overflow: hidden;
   position: relative;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  margin-left: 10px;
+  margin-left: 20px;
 }
 
 .bar-fill {
@@ -1803,7 +1803,7 @@ input::placeholder {
 
   .bar-track {
     height: 34px;
-    margin-left: 20px;
+    margin-left: 10px;
   }
 
   .bar-fill {
@@ -1829,6 +1829,7 @@ input::placeholder {
   .bar-track {
     height: 40px;
     border-radius: 8px;
+    margin-left: 10px;
   }
 
   .bar-fill {

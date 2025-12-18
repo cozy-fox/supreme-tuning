@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supreme Tuning - WordPress Integration Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .info {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info h3 {
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+
+        .info p {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .iframe-container {
+            width: 100%;
+            margin-top: 30px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        #supreme-tuning-iframe {
+            width: 100%;
+            border: none;
+            overflow: hidden;
+            min-height: 400px;
+            display: block;
+        }
+
+        .debug-panel {
+            background: #263238;
+            color: #aed581;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .debug-panel h3 {
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .log-entry {
+            padding: 4px 0;
+            border-bottom: 1px solid #37474f;
+        }
+
+        .log-entry:last-child {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚗 Supreme Tuning - WordPress Integration Test</h1>
+        <p style="color: #666; margin-bottom: 20px;">This page simulates how the Supreme Tuning calculator will work when embedded in WordPress.</p>
+
+        <div class="info">
+            <h3>✅ Integration Status</h3>
+            <p id="status">Initializing...</p>
+        </div>
+
+        <div class="iframe-container">
+            <iframe 
+                id="supreme-tuning-iframe"
+                src="http://localhost:3000"
+                scrolling="no"
+                frameborder="0"
+                title="Supreme Tuning Calculator">
+            </iframe>
+        </div>
+
+        <div class="debug-panel">
+            <h3>📊 Debug Console</h3>
+            <div id="debug-log"></div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Supreme Tuning - WordPress Iframe Dynamic Height Integration
+         */
+        (function() {
+            'use strict';
+
+            const config = {
+                iframeId: 'supreme-tuning-iframe',
+                minHeight: 400,
+                maxHeight: 10000,
+                transitionDuration: '0.3s',
+                debug: true
+            };
+
+            const debugLog = document.getElementById('debug-log');
+            const statusEl = document.getElementById('status');
+
+            function log(message, type = 'info') {
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                const timestamp = new Date().toLocaleTimeString();
+                entry.textContent = `[${timestamp}] ${message}`;
+                debugLog.appendChild(entry);
+                debugLog.scrollTop = debugLog.scrollHeight;
+                console.log(message);
+            }
+
+            function getIframe() {
+                return document.getElementById(config.iframeId);
+            }
+
+            function resizeIframe(height) {
+                const iframe = getIframe();
+                
+                if (!iframe) {
+                    log('⚠️ Iframe not found with id: ' + config.iframeId, 'warn');
+                    return;
+                }
+
+                const validHeight = Math.max(config.minHeight, Math.min(height, config.maxHeight));
+                iframe.style.transition = `height ${config.transitionDuration} ease`;
+                iframe.style.height = validHeight + 'px';
+
+                log(`✅ Iframe resized to ${validHeight}px`);
+            }
+
+            function handleMessage(event) {
+                const data = event.data;
+                
+                if (!data || typeof data !== 'object') {
+                    return;
+                }
+
+                if (data.type === 'supremeTuningResize' && data.height) {
+                    log(`📏 Received height: ${data.height}px from ${data.url || 'iframe'}`);
+                    resizeIframe(data.height);
+                }
+            }
+
+            function init() {
+                window.addEventListener('message', handleMessage, false);
+                log('🚀 WordPress iframe integration initialized');
+                statusEl.textContent = '✅ Integration active - Listening for height changes';
+                statusEl.style.color = '#2e7d32';
+
+                setTimeout(() => {
+                    const iframe = getIframe();
+                    if (iframe) {
+                        iframe.style.height = config.minHeight + 'px';
+                        iframe.style.width = '100%';
+                        iframe.style.border = 'none';
+                        iframe.style.overflow = 'hidden';
+                        log(`📐 Initial iframe height set to ${config.minHeight}px`);
+                    }
+                }, 100);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>
+

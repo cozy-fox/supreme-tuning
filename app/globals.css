@@ -910,19 +910,26 @@ input::placeholder {
   padding: 18px 32px;
   font-size: 1.1rem;
   background: linear-gradient(135deg, #b8c0c8 0%, #d0d8e0 50%, #b8c0c8 100%);
-  background-size: 200% 100%;
-  animation: shimmer 3s ease-in-out infinite;
   box-shadow: var(--shadow-silver);
+  /* Animation disabled for mobile performance - shimmer on hover only */
+}
+
+/* Shimmer animation only on desktop hover for performance */
+@media (min-width: 1024px) {
+  .btn-search {
+    background-size: 200% 100%;
+  }
+
+  .btn-search:hover {
+    animation: shimmer 1.5s ease-in-out;
+  }
 }
 
 @keyframes shimmer {
-
-  0%,
-  100% {
+  0% {
     background-position: 0% 50%;
   }
-
-  50% {
+  100% {
     background-position: 100% 50%;
   }
 }
@@ -983,6 +990,14 @@ input::placeholder {
 
 .animate-in {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Disable animations on mobile for performance */
+@media (max-width: 767px) {
+  .animate-in {
+    animation: none;
+    opacity: 1;
+  }
 }
 
 @keyframes spin {
@@ -1425,13 +1440,12 @@ input::placeholder {
 .stage-section {
   background: var(--chrome-gradient);
   border-radius: 10px;
-  overflow: hidden;
+  overflow: visible; /* Changed from hidden - let parent scroll */
   border: 1px solid var(--border);
   position: relative;
-  flex: 1;
+  /* Removed flex: 1 - let content determine height on mobile */
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .stage-section::before {
@@ -1445,17 +1459,13 @@ input::placeholder {
   pointer-events: none;
 }
 
-/* Mobile-first: single column, scrollable with safe area */
+/* Mobile-first: NO internal scroll - parent container scrolls */
 .stage-content {
   display: flex;
   flex-direction: column;
   position: relative;
   z-index: 1;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  /* Removed overflow - parent .container handles scrolling */
   padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
@@ -2002,7 +2012,7 @@ input::placeholder {
   padding: 12px;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter removed for mobile performance */
   /* flex: 1; */
   display: flex;
   flex-direction: column;
@@ -2610,8 +2620,46 @@ input::placeholder {
 
 /* Ensure proper touch scrolling on mobile */
 @media (max-width: 767px) {
-  body {
-    -webkit-overflow-scrolling: touch;
+  /* PERFORMANCE: Use GPU acceleration for smooth scrolling - only on actual scroll containers */
+  .container,
+  .grid-brands {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* PERFORMANCE: Disable expensive effects on mobile */
+  .card:hover,
+  .brand-card:hover,
+  .group-card-btn:hover {
+    transform: none !important;
+    box-shadow: var(--shadow) !important;
+  }
+
+  /* PERFORMANCE: Simplify transitions on mobile */
+  .card,
+  .brand-card,
+  .btn,
+  .btn-secondary,
+  .stage-section,
+  .group-card-btn {
+    transition: border-color 0.2s ease, opacity 0.2s ease !important;
+  }
+
+  /* PERFORMANCE: Disable ::before shimmer and brushed-metal on mobile */
+  .btn::before,
+  .btn-search-modern::before,
+  .group-btn::before,
+  .brand-card::before,
+  .selection-card::before,
+  .stage-section::before {
+    display: none !important;
+  }
+
+  /* PERFORMANCE: Simplify bar animations */
+  .bar-fill {
+    transition: width 0.3s ease !important;
   }
 
   /* Reduce all vertical spacing on mobile for better space usage */
@@ -2644,5 +2692,18 @@ input::placeholder {
   /* Reduce power stat spacing */
   .power-stat {
     margin-bottom: 12px;
+  }
+
+  /* Results page - ensure no nested scrolling */
+  .results-page .container {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .stage-section {
+    overflow: visible !important;
+  }
+
+  .stage-content {
+    overflow: visible !important;
   }
 }

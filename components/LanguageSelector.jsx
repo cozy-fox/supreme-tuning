@@ -30,27 +30,40 @@ export default function LanguageSelector() {
         zIndex: 1000,
       }}
     >
-      <button
-        onClick={() => setLangDropdown(!langDropdown)}
-        className="btn-icon language-selector-btn"
-        style={{
-          background: 'var(--chrome-gradient)',
-          border: '1px solid var(--border)',
-          borderRadius: '12px',
-          padding: '10px 12px',
-          cursor: 'pointer',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          transition: 'all 0.3s ease',
-          color: 'var(--text-main)',
-          fontSize: '0.9rem',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-        }}
-      >
-        <Globe size={18} color="var(--primary)" />
-        {langMounted && <span style={{ fontSize: '1.1rem' }}>{currentLang?.flag}</span>}
-      </button>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        gap: '4px',
+      }}>
+        {/* <span className="language-selector-label" style={{
+          fontSize: '0.65rem',
+          color: 'var(--text-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.5px',
+          fontWeight: '600',
+          opacity: 0.8,
+        }}>
+          {language === 'nl' ? 'Taal' : language === 'en' ? 'Language' : language === 'de' ? 'Sprache' : 'Langue'}
+        </span> */}
+        <button
+          onClick={() => setLangDropdown(!langDropdown)}
+          className="btn-icon language-selector-btn"
+          style={{
+            background: 'var(--chrome-gradient)',
+            border: '1px solid var(--border)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            transition: 'all 0.3s ease',
+            color: 'var(--text-main)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+          }}
+        >
+          <Globe size={16} color="var(--primary)" />
+          {langMounted && <span>{currentLang?.flag}</span>}
+        </button>
+      </div>
       {langDropdown && (
         <div style={{
           position: 'absolute',

@@ -736,7 +736,7 @@ header .btn-secondary {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-top: 70px;
+  margin-top: 30px;
   flex: 1;
   align-content: start;
   overflow-y: auto;
@@ -747,6 +747,7 @@ header .btn-secondary {
 
 @media (min-width: 480px) {
   .grid-brands {
+    margin-top: 70px;
     padding: 30px;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;

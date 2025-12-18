@@ -49,6 +49,7 @@ export default function BrandCard({ brand }) {
           </div>
         )}
         <p style={{
+          wordBreak: 'break-all',
           marginTop: '16px',
           fontSize: '1.05rem',
           fontWeight: '700',

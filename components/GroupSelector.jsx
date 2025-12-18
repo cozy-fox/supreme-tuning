@@ -79,12 +79,7 @@ export default function GroupSelector({ brand, groups }) {
     // }}>
     <>
       {/* Group Cards Grid - Mobile-first responsive */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: '12px',
-        padding: '20px 0'
-      }}
+      <div
         className="group-cards-grid">
         {sortedGroups.map((group) => (
           <button

@@ -44,6 +44,27 @@ export const metadata = {
   },
 };
 
+import { useEffect } from 'react';
+
+export default function HeightMessenger() {
+  useEffect(() => {
+    const sendHeight = () => {
+      const height = document.documentElement.scrollHeight;
+      window.parent.postMessage(
+        { type: 'supremeTuningHeight', height },
+        '*'
+      );
+    };
+
+    sendHeight();
+    window.addEventListener('resize', sendHeight);
+
+    return () => window.removeEventListener('resize', sendHeight);
+  }, []);
+
+  return null;
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="nl" data-theme="dark" className="notranslate" translate="no">

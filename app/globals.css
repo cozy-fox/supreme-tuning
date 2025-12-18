@@ -2488,19 +2488,19 @@ input::placeholder {
 .group-card-btn {
   padding: 24px 16px;
   min-height: 200px;
-  background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)';
-  border: '2px solid var(--border)';
-  border-radius: '12px';
-  padding: '24px 16px';
-  cursor: 'pointer';
-  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-  position: 'relative';
-  overflow: 'hidden';
-  display: 'flex';
-  flex-direction: 'column';
-  align-items: 'center';
-  gap: '16px';
-  min-height: '200px';
+  background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  min-height: 200px;
 }
 
 .group-logo-container {

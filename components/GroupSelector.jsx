@@ -85,11 +85,26 @@ export default function GroupSelector({ brand, groups }) {
         gap: '12px',
         padding: '20px 0'
       }}
-        className="group-cards-grid">
+      className="group-cards-grid">
         {sortedGroups.map((group) => (
           <button
             key={group.id}
             onClick={() => handleGroupSelect(group)}
+            style={{
+              background: 'linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%)',
+              border: '2px solid var(--border)',
+              borderRadius: '12px',
+              padding: '24px 16px',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '16px',
+              minHeight: '200px'
+            }}
             className="group-card-btn"
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-8px)';
@@ -103,8 +118,19 @@ export default function GroupSelector({ brand, groups }) {
             }}
           >
             {/* Logo */}
-            <div
-              className="group-logo-container">
+            <div style={{
+              width: '100%',
+              maxWidth: '120px',
+              height: '80px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'rgba(0, 0, 0, 0.2)',
+              borderRadius: '8px',
+              padding: '12px',
+              overflow: 'hidden'
+            }}
+            className="group-logo-container">
               {getGroupLogo(group)}
             </div>
 
@@ -112,13 +138,24 @@ export default function GroupSelector({ brand, groups }) {
             <div style={{
               textAlign: 'center'
             }}>
-              <h2
-                className="group-card-title">
-                {group.displayName}
+              <h2 style={{
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                color: 'var(--text-main)',
+                marginBottom: '6px',
+                letterSpacing: '0.5px'
+              }}
+              className="group-card-title">
+                {group.displayName }
               </h2>
               {group.description && (
-                <p
-                  className="group-card-description">
+                <p style={{
+                  fontSize: '0.75rem',
+                  color: 'var(--text-muted)',
+                  lineHeight: '1.4',
+                  fontWeight: '300'
+                }}
+                className="group-card-description">
                   {group.description}
                 </p>
               )}

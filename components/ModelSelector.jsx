@@ -91,7 +91,7 @@ export default function ModelSelector({ brand, models: initialModels }) {
     //   margin: '32px auto 0',
     //   padding: '0 20px'
     // }}>
-    <div className="selector-container animate-in" style={{ marginTop: '32px' }}>
+    <div className="selector-container animate-in">
       {/* Horizontal Selector Row */}
       <div className="selector-row">
         {/* Model Selector */}

@@ -6,115 +6,88 @@ import { usePathname } from 'next/navigation';
 /**
  * Production-ready iframe auto-height component
  * Syncs the app's content height with parent WordPress iframe
- * Uses MutationObserver for dynamic content detection with loop prevention
+ * Measures #root element directly for accurate height
  */
 export default function IframeHeightSync() {
   const pathname = usePathname();
-  const lastHeightRef = useRef(0);
-  const isUpdatingRef = useRef(false);
-  const debounceTimerRef = useRef(null);
-  const initialLoadRef = useRef(true);
+  const lastSentHeightRef = useRef(0);
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     // Check if we're in an iframe
     const isInIframe = window.self !== window.top;
-
     if (!isInIframe) return;
 
-    // Reset state on route change - this is critical!
-    lastHeightRef.current = 0;
-    isUpdatingRef.current = false;
-    initialLoadRef.current = true;
+    // Reset on route change
+    lastSentHeightRef.current = 0;
 
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-      debounceTimerRef.current = null;
-    }
+    const sendHeight = () => {
+      // Measure the #root element which contains all content
+      const root = document.getElementById('root');
+      const header = document.querySelector('header');
 
-    // Function to send height to parent
-    const sendHeight = (force = false) => {
-      // Prevent re-entrant calls during height update (unless forced)
-      if (isUpdatingRef.current && !force) return;
+      let height = 0;
 
-      const height = document.documentElement.scrollHeight;
-
-      // On initial load or force, always send. Otherwise check threshold.
-      if (!initialLoadRef.current && !force) {
-        if (Math.abs(height - lastHeightRef.current) < 10) return;
+      if (root) {
+        // Get the bottom position of #root
+        const rootRect = root.getBoundingClientRect();
+        height = rootRect.height;
       }
 
-      isUpdatingRef.current = true;
-      lastHeightRef.current = height;
-      initialLoadRef.current = false;
+      if (header) {
+        // Add header height
+        const headerRect = header.getBoundingClientRect();
+        height += headerRect.height;
+      }
+
+      // Add small padding
+      height = Math.ceil(height) + 40;
+
+      // Only send if height changed significantly
+      if (Math.abs(height - lastSentHeightRef.current) < 20) return;
+
+      // Sanity check
+      if (height < 100) return;
+
+      lastSentHeightRef.current = height;
 
       window.parent.postMessage(
-        {
-          type: 'IFRAME_HEIGHT',
-          height: height,
-        },
+        { type: 'IFRAME_HEIGHT', height },
         '*'
-        // For production, replace "*" with your WordPress domain for security:
-        // "https://yourwordpresssite.com"
       );
-
-      // Reset the updating flag after a short delay
-      setTimeout(() => {
-        isUpdatingRef.current = false;
-      }, 100);
     };
 
-    // Debounced version to prevent rapid-fire updates
-    const debouncedSendHeight = () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+    // Initial sends with delays
+    sendHeight();
+    const t1 = setTimeout(sendHeight, 200);
+    const t2 = setTimeout(sendHeight, 500);
+    const t3 = setTimeout(sendHeight, 1000);
+
+    // Check periodically for first 5 seconds only
+    intervalRef.current = setInterval(sendHeight, 300);
+    const stopInterval = setTimeout(() => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
-      debounceTimerRef.current = setTimeout(() => sendHeight(false), 50);
-    };
-
-    // Initial sends (important for Safari compatibility)
-    // Use requestAnimationFrame to ensure DOM is painted
-    requestAnimationFrame(() => {
-      sendHeight(true);
-    });
-
-    setTimeout(() => sendHeight(true), 100);
-    setTimeout(() => sendHeight(true), 300);
-    setTimeout(() => sendHeight(true), 800);
+    }, 5000);
 
     // Resize listener
-    window.addEventListener('resize', debouncedSendHeight);
-
-    // Observe DOM changes - but NOT attributes to prevent animation loops
-    const observer = new MutationObserver(debouncedSendHeight);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: false, // Disabled to prevent CSS animation/transition loops
-    });
-
-    // Also observe images loading
-    const handleImageLoad = () => debouncedSendHeight();
-    const images = document.querySelectorAll('img');
-    images.forEach(img => {
-      if (!img.complete) {
-        img.addEventListener('load', handleImageLoad);
-      }
-    });
+    window.addEventListener('resize', sendHeight);
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', debouncedSendHeight);
-      observer.disconnect();
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(stopInterval);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
       }
-      // Clean up image listeners
-      images.forEach(img => {
-        img.removeEventListener('load', handleImageLoad);
-      });
+      window.removeEventListener('resize', sendHeight);
     };
-  }, [pathname]); // Re-run when route changes
+  }, [pathname]);
 
-  return null; // This component doesn't render anything
+  return null;
 }
 

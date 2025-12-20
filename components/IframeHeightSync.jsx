@@ -18,27 +18,33 @@ export default function IframeHeightSync() {
     lastHeightRef.current = 0;
 
     const getHeight = () => {
-      const root = document.getElementById('root');
+      const main = document.querySelector('main');
       const header = document.querySelector('header');
 
-      let totalHeight = 0;
+      if (!main) return 600;
 
-      if (header) {
-        totalHeight += header.offsetHeight;
-      }
+      // Temporarily set body height to auto to get true content height
+      const originalHeight = document.body.style.height;
+      document.body.style.height = 'auto';
 
-      if (root) {
-        totalHeight += root.offsetHeight;
-      }
+      // Force reflow
+      void document.body.offsetHeight;
 
-      return totalHeight + 20; // small padding
+      // Now measure
+      const headerHeight = header ? header.offsetHeight : 0;
+      const mainHeight = main.offsetHeight;
+
+      // Restore original height
+      document.body.style.height = originalHeight;
+
+      return headerHeight + mainHeight + 20;
     };
 
     const sendHeight = () => {
       const height = getHeight();
 
-      // Only send if height actually changed
-      if (height === lastHeightRef.current) return;
+      // Only send if height actually changed by more than 5px
+      if (Math.abs(height - lastHeightRef.current) < 5) return;
       if (height < 100) return;
 
       lastHeightRef.current = height;
@@ -57,8 +63,10 @@ export default function IframeHeightSync() {
       // Check if clicked element or its parent has the stage-arrow-btn class
       const target = e.target.closest('.stage-arrow-btn');
       if (target) {
-        setTimeout(sendHeight, 100);
-        setTimeout(sendHeight, 300);
+        // Reset last height to force sending new height
+        lastHeightRef.current = 0;
+        setTimeout(sendHeight, 150);
+        setTimeout(sendHeight, 400);
       }
     };
 

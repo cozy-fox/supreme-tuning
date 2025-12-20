@@ -52,10 +52,14 @@ export default function IframeHeightSync() {
     const t3 = setTimeout(sendHeight, 600);
     const t4 = setTimeout(sendHeight, 1000);
 
-    // Listen for click events to recalculate height after interactions
-    const handleClick = () => {
-      setTimeout(sendHeight, 100);
-      setTimeout(sendHeight, 300);
+    // Only listen for clicks on stage arrow buttons
+    const handleClick = (e) => {
+      // Check if clicked element or its parent has the stage-arrow-btn class
+      const target = e.target.closest('.stage-arrow-btn');
+      if (target) {
+        setTimeout(sendHeight, 100);
+        setTimeout(sendHeight, 300);
+      }
     };
 
     document.addEventListener('click', handleClick);

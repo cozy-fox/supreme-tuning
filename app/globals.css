@@ -2025,13 +2025,13 @@ input::placeholder {
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 14px;
-  margin-bottom: 14px;
+  margin-bottom: 5px;
 }
 
 @media (min-width: 768px) {
   .price-box {
     padding: 18px;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
   }
 }
 
@@ -2039,7 +2039,7 @@ input::placeholder {
   .price-box {
     border-radius: 10px;
     padding: 24px;
-    margin-bottom: 28px;
+    margin-bottom: 5px;
   }
 }
 
@@ -2079,7 +2079,8 @@ input::placeholder {
 
 /* Gearbox Tuning Notice - Mobile-first */
 .gearbox-tuning-notice {
-  margin: 15px;
+  margin: 5px 0px;
+  margin-bottom: 10px;
   padding: 14px;
   background: linear-gradient(135deg, rgba(0, 255, 136, 0.12) 0%, rgba(0, 200, 100, 0.08) 100%);
   border: 1px solid rgba(0, 255, 136, 0.35);
@@ -2910,7 +2911,7 @@ input::placeholder {
   /* Compact price display on mobile */
   .price-box {
     padding: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 5px;
   }
 
   /* Reduce power stat spacing */

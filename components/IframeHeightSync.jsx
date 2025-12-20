@@ -4,8 +4,9 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 /**
- * Component that syncs the app's height with parent WordPress iframe
- * Sends postMessage to parent window with current height
+ * Production-ready iframe auto-height component
+ * Syncs the app's content height with parent WordPress iframe
+ * Uses MutationObserver for dynamic content detection
  */
 export default function IframeHeightSync() {
   const pathname = usePathname();
@@ -17,90 +18,55 @@ export default function IframeHeightSync() {
     if (!isInIframe) return;
 
     let lastHeight = 0;
-    const tolerance = 10; // Only send if height changed by more than 10px
-
-    // Function to get accurate content height
-    const getContentHeight = () => {
-      const body = document.body;
-      const html = document.documentElement;
-
-      // Try multiple methods and use the largest value
-      const heights = [
-        body.scrollHeight,
-        body.offsetHeight,
-        html.clientHeight,
-        html.scrollHeight,
-        html.offsetHeight
-      ];
-
-      return Math.max(...heights);
-    };
 
     // Function to send height to parent
     const sendHeight = () => {
-      try {
-        const currentHeight = getContentHeight();
+      const height = document.documentElement.scrollHeight;
 
-        // Only send if height changed significantly
-        if (Math.abs(currentHeight - lastHeight) > tolerance) {
-          window.parent.postMessage({
-            type: 'supremeTuningResize',
-            height: currentHeight,
-            url: window.location.href
-          }, '*');
+      // Prevent resize loops - only send if height changed by more than 5px
+      if (Math.abs(height - lastHeight) < 5) return;
 
-          lastHeight = currentHeight;
-          console.log('Supreme Tuning: Height sent to parent:', currentHeight);
-        }
-      } catch (e) {
-        console.error('Failed to send height to parent:', e);
-      }
+      window.parent.postMessage(
+        {
+          type: 'IFRAME_HEIGHT',
+          height,
+        },
+        '*'
+        // For production, replace "*" with your WordPress domain for security:
+        // "https://yourwordpresssite.com"
+      );
+
+      lastHeight = height;
     };
 
-    // Debounced send height
-    let resizeTimer;
-    const debouncedSendHeight = () => {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(sendHeight, 100);
-    };
+    // Initial sends (important for Safari compatibility)
+    sendHeight();
+    setTimeout(sendHeight, 300);
+    setTimeout(sendHeight, 800);
 
-    // Send height on mount
-    setTimeout(sendHeight, 100);
+    // Resize listener
+    window.addEventListener('resize', sendHeight);
 
-    // Send height on window resize
-    window.addEventListener('resize', debouncedSendHeight);
+    // Observe DOM changes (API content, toggles, dynamic content, etc.)
+    const observer = new MutationObserver(sendHeight);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+    });
 
-    // Use ResizeObserver to detect content changes
-    const resizeObserver = new ResizeObserver(debouncedSendHeight);
-
-    // Observe the root element
-    const root = document.getElementById('root');
-    if (root) {
-      resizeObserver.observe(root);
-    }
-
-    // Also observe body
-    resizeObserver.observe(document.body);
-
-    // Send height periodically (fallback)
-    const interval = setInterval(sendHeight, 300);
-
-    // Send height after images load
+    // Also observe images loading
     const images = document.querySelectorAll('img');
     images.forEach(img => {
-      if (img.complete) {
-        sendHeight();
-      } else {
+      if (!img.complete) {
         img.addEventListener('load', sendHeight);
       }
     });
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', debouncedSendHeight);
-      resizeObserver.disconnect();
-      clearInterval(interval);
-      clearTimeout(resizeTimer);
+      window.removeEventListener('resize', sendHeight);
+      observer.disconnect();
     };
   }, [pathname]); // Re-run when route changes
 

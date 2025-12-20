@@ -109,17 +109,30 @@ main {
   overflow: hidden;
 }
 
-/* Iframe mode - styles for when embedded in WordPress */
-html.iframe-mode,
-html.iframe-mode body,
+/* Iframe mode - styles for when embedded in WordPress with dynamic height */
+html.iframe-mode {
+  height: auto;
+  min-height: auto;
+  overflow: visible;
+}
+
+html.iframe-mode body {
+  height: auto;
+  min-height: auto;
+  max-height: none;
+  overflow: visible;
+}
+
 html.iframe-mode #root {
-  height: 100%;
-  min-height: 100%;
-  overflow: hidden;
+  height: auto;
+  min-height: auto;
+  overflow: visible;
 }
 
 html.iframe-mode main {
   padding: 0;
+  min-height: auto;
+  overflow: visible;
 }
 
 /* Typography */
@@ -154,12 +167,6 @@ h3 {
 }
 
 /* Container - Mobile-first, optimized padding for iframe with proper gaps */
-.container {
-  /* width: 100%; */
-  /* max-width: 1200px; */
-
-}
-
 .container {
   width: 100%;
   margin: 0 auto;

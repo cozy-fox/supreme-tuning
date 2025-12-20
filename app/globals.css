@@ -109,36 +109,22 @@ main {
   overflow: hidden;
 }
 
-/* Iframe mode - styles for when embedded in WordPress with dynamic height */
-html.iframe-mode {
-  height: auto !important;
-  min-height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
-}
-
+/* Iframe mode - fixed height, no dynamic sizing */
+html.iframe-mode,
 html.iframe-mode body {
-  height: auto !important;
-  min-height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
+  height: 100%;
+  overflow: hidden;
 }
 
 html.iframe-mode #root {
-  height: auto !important;
-  min-height: auto !important;
-  max-height: none !important;
-  overflow: visible !important;
-  display: block !important;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 html.iframe-mode main {
   padding: 0;
-  min-height: auto !important;
-  height: auto !important;
-  overflow: visible !important;
-  display: block !important;
-  flex: none !important;
 }
 
 /* Typography */

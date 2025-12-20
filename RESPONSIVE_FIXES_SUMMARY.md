@@ -83,12 +83,14 @@ XL:      ≥ 1200px
 /* Mobile */
 .container {
   padding: 16px 12px;  /* Increased from 8px */
+  padding-top: 0px;
 }
 
 /* Desktop */
 @media (min-width: 1024px) {
   .container {
     padding: 32px 40px;
+    padding-top: 0px;
     max-width: calc(100% - 80px);  /* Adds side gaps */
   }
 }
@@ -98,6 +100,7 @@ XL:      ≥ 1200px
   .container {
     max-width: 1200px;
     padding: 32px 40px;
+    padding-top: 0px;
   }
 }
 ```

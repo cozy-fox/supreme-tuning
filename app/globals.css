@@ -164,6 +164,7 @@ h3 {
   width: 100%;
   margin: 0 auto;
   padding: 16px 12px;
+  padding-top: 0px;
   height: 100%;
   /* flex: 1; */
   display: flex;
@@ -175,6 +176,7 @@ h3 {
   .container {
     max-width: 720px;
     padding: 24px 30px;
+    padding-top: 0px;
   }
 }
 
@@ -182,6 +184,7 @@ h3 {
   .container {
     max-width: 960px;
     padding: 32px 40px;
+    padding-top: 0px;
   }
 }
 
@@ -189,6 +192,7 @@ h3 {
   .container {
     max-width: 1140px;
     padding: 32px 40px;
+    padding-top: 0px;
   }
 }
 
@@ -2075,7 +2079,7 @@ input::placeholder {
 
 /* Gearbox Tuning Notice - Mobile-first */
 .gearbox-tuning-notice {
-  margin-top: 16px;
+  margin: 15px;
   padding: 14px;
   background: linear-gradient(135deg, rgba(0, 255, 136, 0.12) 0%, rgba(0, 200, 100, 0.08) 100%);
   border: 1px solid rgba(0, 255, 136, 0.35);
@@ -2511,7 +2515,7 @@ input::placeholder {
 .breadcrumb {
   font-size: 0.7rem;
   padding: 8px 0;
-  margin-top: 12px;
+  /* margin-top: 12px; */
   margin-left: 20px;
 }
 
@@ -2519,14 +2523,14 @@ input::placeholder {
   .breadcrumb {
     font-size: 0.85rem;
     padding: 16px 0;
-    margin-top: 16px;
+    /* margin-top: 16px; */
   }
 }
 
 @media (min-width: 1024px) {
   .breadcrumb {
     font-size: 1rem;
-    padding: 20px 0;
+    padding: 0px 0 20px 0;
     margin-top: 0;
   }
 }

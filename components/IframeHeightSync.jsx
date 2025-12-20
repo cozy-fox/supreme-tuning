@@ -13,6 +13,7 @@ export default function IframeHeightSync() {
   const lastHeightRef = useRef(0);
   const isUpdatingRef = useRef(false);
   const debounceTimerRef = useRef(null);
+  const initialLoadRef = useRef(true);
 
   useEffect(() => {
     // Check if we're in an iframe
@@ -20,27 +21,36 @@ export default function IframeHeightSync() {
 
     if (!isInIframe) return;
 
+    // Reset state on route change - this is critical!
+    lastHeightRef.current = 0;
+    isUpdatingRef.current = false;
+    initialLoadRef.current = true;
+
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
     // Function to send height to parent
-    const sendHeight = () => {
-      // Prevent re-entrant calls during height update
-      if (isUpdatingRef.current) return;
+    const sendHeight = (force = false) => {
+      // Prevent re-entrant calls during height update (unless forced)
+      if (isUpdatingRef.current && !force) return;
 
       const height = document.documentElement.scrollHeight;
 
-      // Prevent resize loops - only send if height changed significantly
-      if (Math.abs(height - lastHeightRef.current) < 10) return;
-
-      // Set a maximum reasonable height to prevent runaway growth
-      const maxHeight = 5000; // Adjust based on your content
-      const safeHeight = Math.min(height, maxHeight);
+      // On initial load or force, always send. Otherwise check threshold.
+      if (!initialLoadRef.current && !force) {
+        if (Math.abs(height - lastHeightRef.current) < 10) return;
+      }
 
       isUpdatingRef.current = true;
-      lastHeightRef.current = safeHeight;
+      lastHeightRef.current = height;
+      initialLoadRef.current = false;
 
       window.parent.postMessage(
         {
           type: 'IFRAME_HEIGHT',
-          height: safeHeight,
+          height: height,
         },
         '*'
         // For production, replace "*" with your WordPress domain for security:
@@ -58,15 +68,18 @@ export default function IframeHeightSync() {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
-      debounceTimerRef.current = setTimeout(sendHeight, 50);
+      debounceTimerRef.current = setTimeout(() => sendHeight(false), 50);
     };
 
     // Initial sends (important for Safari compatibility)
-    sendHeight();
-    setTimeout(sendHeight, 300);
-    setTimeout(sendHeight, 800);
-    // One more after animations typically complete
-    setTimeout(sendHeight, 1500);
+    // Use requestAnimationFrame to ensure DOM is painted
+    requestAnimationFrame(() => {
+      sendHeight(true);
+    });
+
+    setTimeout(() => sendHeight(true), 100);
+    setTimeout(() => sendHeight(true), 300);
+    setTimeout(() => sendHeight(true), 800);
 
     // Resize listener
     window.addEventListener('resize', debouncedSendHeight);
@@ -80,10 +93,11 @@ export default function IframeHeightSync() {
     });
 
     // Also observe images loading
+    const handleImageLoad = () => debouncedSendHeight();
     const images = document.querySelectorAll('img');
     images.forEach(img => {
       if (!img.complete) {
-        img.addEventListener('load', debouncedSendHeight);
+        img.addEventListener('load', handleImageLoad);
       }
     });
 
@@ -94,6 +108,10 @@ export default function IframeHeightSync() {
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
       }
+      // Clean up image listeners
+      images.forEach(img => {
+        img.removeEventListener('load', handleImageLoad);
+      });
     };
   }, [pathname]); // Re-run when route changes
 

@@ -22,10 +22,10 @@ export default function ResultsClient({ stages, vehicleInfo }) {
 
   if (stages.length === 0) {
     return (
-      <div className="card" style={{ textAlign: 'center', padding: '60px 40px', marginTop: '40px' }}>
-        <AlertCircle size={48} color="#ffaa00" style={{ marginBottom: '20px' }} />
+      <div className="card empty-state">
+        <AlertCircle size={48} color="#ffaa00" className="empty-state-icon" />
         <h2>{t('noTuningData')}</h2>
-        <p style={{ color: '#8a8a8a' }}>
+        <p>
           {t('contactForQuote')} {vehicleInfo.brand} {vehicleInfo.model}.
         </p>
       </div>
@@ -102,7 +102,7 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
   const hasEcuUnlock = ecuUnlock && ecuUnlock.required;
 
   return (
-    <div className="stage-section animate-in" style={{ marginBottom: '24px' }}>
+    <div className="stage-section animate-in">
       <div className="stage-content">
         <div className="stage-description">
           <div className="stage-header">
@@ -134,36 +134,22 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
           )}
 
           {hasEcuUnlock && (
-            <div className="ecu-unlock-warning" style={{
-              marginTop: '16px',
-              padding: '16px',
-              background: 'linear-gradient(135deg, rgba(255, 170, 0, 0.15) 0%, rgba(255, 100, 0, 0.1) 100%)',
-              border: '1px solid rgba(255, 170, 0, 0.4)',
-              borderRadius: '8px'
-            }}>
-              <h4 style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                color: '#ffaa00',
-                marginBottom: '12px',
-                fontSize: '14px',
-                fontWeight: '600'
-              }}>
+            <div className="ecu-unlock-warning">
+              <h4>
                 <Unlock size={18} /> {t('ecuUnlockRequired')}
               </h4>
               {ecuUnlock.fromDate && (
-                <p style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px' }}>
+                <p>
                   <strong>{t('fromDate')}:</strong> {ecuUnlock.fromDate}
                 </p>
               )}
               {ecuUnlock.extraCost && (
-                <p style={{ fontSize: '13px', color: '#ccc', marginBottom: '8px' }}>
+                <p>
                   <strong>{t('extraCost')}:</strong> {ecuUnlock.extraCost}
                 </p>
               )}
               {ecuUnlock.note && (
-                <p style={{ fontSize: '12px', color: '#aaa', lineHeight: '1.5' }}>
+                <p>
                   {ecuUnlock.note}
                 </p>
               )}
@@ -227,6 +213,16 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
               <span>{stage.stageName || 'Stage 1'}</span>
               <span className="price-value">€{stage.price || '---'}</span>
             </div>
+          </div>
+
+          {/* Gearbox Tuning Notice - Mandatory for all vehicles */}
+          <div className="gearbox-tuning-notice">
+            <h4>
+              <Zap size={16} /> {t('gearboxTuningIncluded')}
+            </h4>
+            <p>
+              {t('gearboxTuningDescription')}
+            </p>
           </div>
 
           <div className="action-buttons">

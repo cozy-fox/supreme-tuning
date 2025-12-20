@@ -16,21 +16,10 @@ export default function GroupLogo({ logo, size = 80, alt = 'Group logo' }) {
   // Check if it's a custom uploaded logo (data URL)
   if (logo.startsWith('data:')) {
     return (
-      <div style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      <div className="group-logo-wrapper">
         <img
           src={logo}
           alt={alt}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain'
-          }}
         />
       </div>
     );
@@ -57,24 +46,13 @@ export default function GroupLogo({ logo, size = 80, alt = 'Group logo' }) {
           <img
             src={logo}
             alt={alt}
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'contain'
-            }}
           />
         );
     }
   })();
 
   return (
-    <div style={{
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    }}>
+    <div className="group-logo-wrapper">
       {LogoComponent}
     </div>
   );

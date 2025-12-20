@@ -87,12 +87,7 @@ export default async function GroupSelectionPage({ params }) {
         <h1>{brand.name}</h1>
         <ClientTranslation
           translationKey="selectVariant"
-          style={{
-            color: 'var(--text-muted)',
-            maxWidth: '600px',
-            margin: '0 auto',
-            display: 'block'
-          }}
+          className="hero-subtitle"
         />
       </div>
 

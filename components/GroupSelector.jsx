@@ -41,13 +41,6 @@ export default function GroupSelector({ brand, groups }) {
           alt={group.name}
           width={240}
           height={140}
-          style={{
-            objectFit: 'contain',
-            maxWidth: '100%',
-            maxHeight: '100%',
-            width: 'auto',
-            height: 'auto',
-          }}
           onError={() => handleImageError(group.id)}
         />
       );
@@ -60,13 +53,6 @@ export default function GroupSelector({ brand, groups }) {
         alt={group.name}
         width={240}
         height={140}
-        style={{
-          objectFit: 'contain',
-          maxWidth: '100%',
-          maxHeight: '100%',
-          width: 'auto',
-          height: 'auto',
-        }}
       />
     );
   };
@@ -104,30 +90,19 @@ export default function GroupSelector({ brand, groups }) {
             </div>
 
             {/* Group Name */}
-            <div style={{
-              textAlign: 'center'
-            }}>
-              <h2
-                className="group-card-title">
+            <div className="group-card-text">
+              <h2 className="group-card-title">
                 {group.displayName}
               </h2>
               {group.description && (
-                <p
-                  className="group-card-description">
+                <p className="group-card-description">
                   {group.description}
                 </p>
               )}
             </div>
 
             {/* Subtle accent line */}
-            <div style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: '4px',
-              background: 'linear-gradient(90deg, transparent 0%, var(--primary) 50%, transparent 100%)'
-            }} />
+            <div className="group-card-accent" />
           </button>
         ))}
       </div>

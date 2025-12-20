@@ -8,11 +8,11 @@ export default function HeroSection() {
 
   return (
     <div className="hero-section">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', marginBottom: '20px' }}>
+      <div className="hero-title-container">
         <Zap size={40} color="var(--primary)" />
         <h1>{t('chiptuningCalculator')}</h1>
       </div>
-      <p style={{ color: 'var(--text-muted)', maxWidth: '800px', margin: '0 auto' }}>
+      <p className="hero-subtitle">
         {t('selectBrand')}
       </p>
     </div>

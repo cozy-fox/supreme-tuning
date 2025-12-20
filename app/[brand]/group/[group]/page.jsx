@@ -65,17 +65,12 @@ export default async function GroupModelSelectionPage({ params }) {
 
       {/* Hero Section with Group Info */}
       <div className="hero-section">
-        <h1 style={{ marginBottom: '12px' }}>
+        <h1 className="hero-title-spaced">
           {brand.name} {group.displayName}
         </h1>
         <ClientTranslation
           translationKey="selectModelGeneration"
-          style={{
-            color: 'var(--text-muted)',
-            maxWidth: '700px',
-            margin: '0 auto',
-            display: 'block'
-          }}
+          className="hero-subtitle"
         />
       </div>
 

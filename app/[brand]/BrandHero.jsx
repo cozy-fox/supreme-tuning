@@ -8,7 +8,7 @@ export default function BrandHero({ brandName, hasGroups }) {
   return (
     <div className="hero-section">
       <h1>{brandName} Chiptuning</h1>
-      <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
+      <p className="hero-subtitle">
         {hasGroups ? t('selectGroupFirst') : t('selectModelGeneration')}
       </p>
     </div>

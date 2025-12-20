@@ -128,8 +128,8 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
     <div className="selector-container animate-in">
       {/* Group Selection for brands with performance divisions */}
       {hasGroups && (
-        <div className="group-selector-row" style={{ marginBottom: '24px' }}>
-          <div className="group-buttons" style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className="group-selector-row">
+          <div className="group-buttons">
             {groups.map(group => {
               // Performance group styling
               const getGroupStyle = () => {
@@ -296,7 +296,7 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
       </div>
 
       {loading && (
-        <div className="flex-center" style={{ padding: '20px 0' }}>
+        <div className="flex-center loading-container">
           <div className="spinner"></div>
         </div>
       )}

@@ -800,7 +800,7 @@ header .btn-secondary {
   margin-top: 30px;
   flex: 1;
   align-content: start;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   -webkit-overflow-scrolling: touch;
   padding: 30px;
   padding-bottom: 10px;

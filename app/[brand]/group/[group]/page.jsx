@@ -66,7 +66,8 @@ export default async function GroupModelSelectionPage({ params }) {
       {/* Hero Section with Group Info */}
       <div className="hero-section">
         <h1 className="hero-title-spaced">
-          {brand.name} {group.displayName}
+          {/* {brand.name} {group.displayName} */}
+          {brand.name}
         </h1>
         <ClientTranslation
           translationKey="selectModelGeneration"

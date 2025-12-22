@@ -436,6 +436,7 @@ header .btn-secondary {
 @media (min-width: 768px) {
   .app-header {
     padding: 16px 0;
+    padding-bottom: 0px;
   }
 
   .header-container {
@@ -1113,6 +1114,10 @@ input::placeholder {
   justify-content: center;
   gap: 16px;
   margin-bottom: 20px;
+}
+.hero-title-container h1 {
+  margin: 0px;
+  padding: 0px;
 }
 
 .hero-section .hero-subtitle {

@@ -717,7 +717,7 @@ header .btn-secondary {
 }
 
 .brand-card p {
-  word-break: break-all;
+  /* word-break: break-all; */
   font-size: 0.8rem !important;
   margin-top: 8px !important;
   font-weight: 700;
@@ -818,6 +818,13 @@ header .btn-secondary {
 
 
 /* Grid - Tablet */
+@media (max-width:586px) {
+  .grid-brands {
+    grid-template-columns: repeat(2, 1fr);
+
+  }
+}
+
 @media (min-width: 768px) {
   .grid-brands {
     grid-template-columns: repeat(3, 1fr);

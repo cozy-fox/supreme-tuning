@@ -109,7 +109,8 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
             <h2>{vehicleInfo.brand} {vehicleInfo.model}</h2>
             <h3>
               {stage.stageName || 'Stage 1'}
-              <Zap size={20} color="#a8b0b8" />
+              {/* <Zap size={20} color="#a8b0b8" /> */}
+              <img src="/assets/logo.png" alt="Supreme Tuning Logo" width={35} />
             </h3>
           </div>
 
@@ -218,7 +219,9 @@ function StageSection({ stage, vehicleInfo, isStage2 }) {
           {/* Gearbox Tuning Notice - Mandatory for all vehicles */}
           <div className="gearbox-tuning-notice">
             <h4>
-              <Zap size={16} /> {t('gearboxTuningIncluded')}
+              {/* <Zap size={16} /> {t('gearboxTuningIncluded')} */}
+              <img src="/assets/logo.png" alt="Supreme Tuning Logo" width={25} />
+              {t('gearboxTuningIncluded')}
             </h4>
             <p>
               {t('gearboxTuningDescription')}

@@ -205,7 +205,9 @@ export default function BrandSelector({ brand, models: initialModels, brandGroup
                 >
                   {/* {group.isPerformance && <span style={{ fontSize: '1.2rem' }}>{getGroupIcon()}</span>} */}
                   {/* {group.isPerformance && <span style={{ fontSize: '1.2rem' }}></span>} */}
-                  {group.isPerformance && <Zap size={16} />}
+                  {/* {group.isPerformance && <Zap size={16} />} */}
+                  {group.isPerformance && <img src="/assets/logo.png" alt="Supreme Tuning Logo" width={16} />}
+                  
                   <span>{group.displayName || group.name}</span>
                 </button>
               );
